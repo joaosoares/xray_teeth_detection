@@ -19,6 +19,8 @@ class Shape:
 
         Aligns by minimizing the weighted sum described in Eq. 2 of Cootes et al.
         """
+        W = self.get_weights(points)
+
         pass
 
     def normalize(self):
