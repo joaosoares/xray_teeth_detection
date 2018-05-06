@@ -26,11 +26,39 @@ class Shape:
         pass
 
     @classmethod
-    def align_shapes(cls, shapes):
-        """Align a set of N shapes"""
-        pass
+    def apply_procrustes(cls, shapes):
+        """Align a set of N shapes according to the Procrustes method"""
+        # 0. Normalize origin of the first shape
+        shapes[0].normalize()
         # 1. Rotate, scale and translate each shape to align with the first shape in the set
-        map
+        ref_shape, *other_shapes = shapes
+        cls.align_many(cls, ref_shape, other_shapes)
+        map(lambda x: self.align(x, shapes[0]), shapes[1:])
+        # 2. Calculate mean shape from aligned shapes
+        reference_mean = cls.mean(cls, shapes)
+        # 3. Repeat loop until process converges
+        converged = False
+        while not converged:
+            # 4. Calculate mean shape from aligned shapes
+            mean = cls.mean(cls, shapes)
+            # 5. Normalize orientation, scale and origin of the current mean
+            mean.normalize()
+            # 6. Realign every shape with current mean
+            cls.align_many(cls, mean, shapes)
+            # 7. Check convergence
+            converged = (mean == reference_mean)
+            reference_mean = mean
+
+    @classmethod
+    def mean(cls, shapes):
+        """Finds the mean of a set of shapes"""
+        pass
+
+    @classmethod
+    def align_many(cls, ref_shape, other_shapes):
+        """Rotate, scale and translate each shape to align with the ref_shape"""
+        for shape in ref_shape:
+            shape.align(ref_shape)
 
 
 def show_labeler_window(cur_img, landmark_pairs, prev_img=None, prev_img_points=None):
