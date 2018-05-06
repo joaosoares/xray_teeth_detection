@@ -1,3 +1,10 @@
+def get_landmark_vector(landmarks_filename):
+    with open(landmarks_filename) as f:
+        points = [int(float(x)) for x in f.readlines()]
+        it = iter(points)
+        return list(zip(it, it))
+
+
 def main():
     base_path = './_Data/Radiographs/'
     landmarks_path = './_Data/Landmarks/original/'
