@@ -3,24 +3,25 @@
 import cv2
 import numpy as np
 from itertools import chain
-from typing import NewType, Tuple
+from typing import NewType, Tuple, List
 
 
 Point = NewType('Point', int)
 
 
 class Shape:
-    def __init__(self, points: Tuple[Point, Point]):
-        self.points = points
+    def __init__(self, points: List[Tuple[Point, Point]]):
+        self.points
 
-    def align(self, other_shape):
+    def align(self, other_shape: Shape):
         """
         Aligns shape to another reference shape
 
         Aligns by minimizing the weighted sum described in Eq. 2 of Cootes et al.
         """
-        W = self.get_weights(points)
+        W = self.get_weights(other_shape.points)
 
+    def get_weights(self, points):
         pass
 
     def normalize(self):
@@ -30,26 +31,26 @@ class Shape:
     @classmethod
     def apply_procrustes(cls, shapes):
         """Align a set of N shapes according to the Procrustes method"""
+        ref_shape, *_ = shapes
         # 0. Normalize origin of the first shape
-        shapes[0].normalize()
+        ref_shape.normalize()
         # 1. Rotate, scale and translate each shape to align with the first shape in the set
-        ref_shape, *other_shapes = shapes
-        cls.align_many(cls, ref_shape, other_shapes)
-        map(lambda x: self.align(x, shapes[0]), shapes[1:])
+        cls.align_many(ref_shape, shapes)
         # 2. Calculate mean shape from aligned shapes
-        reference_mean = cls.mean(cls, shapes)
+        reference_mean = cls.mean(shapes)
         # 3. Repeat loop until process converges
         converged = False
         while not converged:
             # 4. Calculate mean shape from aligned shapes
-            mean = cls.mean(cls, shapes)
+            mean = cls.mean(shapes)
             # 5. Normalize orientation, scale and origin of the current mean
             mean.normalize()
             # 6. Realign every shape with current mean
-            cls.align_many(cls, mean, shapes)
+            cls.align_many(mean, shapes)
             # 7. Check convergence
             converged = (mean == reference_mean)
             reference_mean = mean
+        return reference_mean
 
     @classmethod
     def mean(cls, shapes):
