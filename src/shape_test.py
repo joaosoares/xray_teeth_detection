@@ -1,0 +1,19 @@
+import unittest
+from shape import Shape
+
+
+class TestShape(unittest.TestCase):
+    def test_translate_all_to_origin(self):
+        shapes = [
+            Shape([(1, 2), (1, 3), (1, 4), (2, 4), (3, 4), (3, 3), (3, 2),
+                   (2, 2)]),
+            Shape([(11, 2), (11, 3), (11, 4), (12, 4), (13, 4), (13, 3),
+                   (13, 2), (12, 2)]),
+        ]
+
+        Shape.translate_all_to_origin(shapes)
+        self.assertEqual(shapes[0].points.all(), shapes[1].points.all())
+
+
+if __name__ == '__main__':
+    unittest.main()
