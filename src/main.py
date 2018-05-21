@@ -1,4 +1,7 @@
 import cv2
+from shape import Shape
+from active_shape_model import ActiveShapeModel
+import matplotlib.pyplot as plt
 
 
 def show_labeler_window(cur_img,
@@ -22,22 +25,22 @@ def get_landmark_pairs(landmarks_filename):
 
 
 def main():
-    base_path = './data/Radiographs/'
+    # base_path = './data/Radiographs/'
     landmarks_path = './data/Landmarks/original/'
-    cur_img = cv2.imread(base_path + '01.tif')
-    landmark_pairs = []
-    landmark_pairs_array = []
+    # cur_img = cv2.imread(base_path + '01.tif')
+    teeth_points = []
     for i in range(1, 15):
-        cur_landmark_pairs = get_landmark_pairs(landmarks_path +
-                                                "landmarks{}-1.txt".format(i))
-        landmark_pairs_array.append(list(chain(*cur_landmark_pairs)))
-        landmark_pairs_array.append(cur_landmark_pairs)
+        teeth_points.append(
+            get_landmark_pairs(landmarks_path + "landmarks{}-1.txt".format(i)))
 
-    show_labeler_window(cur_img, landmark_pairs)
-    while (1):
-        if cv2.waitKey(20) == ord('q'):
-            break
-    cv2.destroyAllWindows()
+    teeth = [Shape(tooth_points) for tooth_points in teeth_points]
+    Shape.apply_procrustes(teeth)
+
+    ActiveShapeModel.from_shapes(teeth)
+
+    # for tooth in teeth:
+    #     plt.plot(tooth.points[:, 0], tooth.points[:, 1])
+    # plt.show()
 
 
 if __name__ == '__main__':

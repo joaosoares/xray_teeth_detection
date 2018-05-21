@@ -1,23 +1,24 @@
 '''Procrustes method library'''
 
+from itertools import chain
+from typing import List, NewType, Tuple, Union
+
 import cv2
 import numpy as np
-from itertools import chain
-from typing import NewType, Tuple, List
 
 Point = NewType('Point', int)  # Point does something
 
 
 class Shape:
-    def __init__(self, points: List[Tuple[Point, Point]]):
+    def __init__(self, points: Union[List[Tuple[Point, Point]], np.ndarray]):
         self.points = np.array(points)
+
+    def __len__(self):
+        return np.shape(self.points)[0]
 
     def norm(self):
         """Returns the norm of a vector containing all points"""
         return np.linalg.norm(self.points)
-
-    def __len__(self):
-        return np.shape(self.points)[0]
 
     # This function may have too much fluctuation
     def align(self, ref_shape):
@@ -40,7 +41,6 @@ class Shape:
         # s and theta coeffs
         s = np.sqrt(a**2 + b**2)
         theta = np.tanh(b / a)
-        print(s, theta)
         # rotation matrix
         rot_mat = np.array([(np.cos(theta), np.sin(theta)), (-np.sin(theta),
                                                              np.cos(theta))])
@@ -69,26 +69,12 @@ class Shape:
         ref_shape, *_ = shapes
         # Rotate, scale and translate each shape to align with the first shape in the set
         cls.align_many(ref_shape, shapes)
-        return shapes
-        # # 2. Calculate mean shape from aligned shapes
-        # ref_shape = cls.mean(shapes)
-        # # 3. Repeat loop until process converges
-        # converged = False
-        # while not converged:
-        #     # 4. Calculate mean shape from aligned shapes
-        #     mean = cls.mean(shapes)
-        #     # 5. Normalize orientation, scale and origin of the current mean
-        #     mean.normalize()
-        #     # 6. Realign every shape with current mean
-        #     cls.align_many(mean, shapes)
-        #     # 7. Check convergence
-        #     converged = np.max(mean.points - ref_shape.points) < 0.1
-        #     ref_shape = mean
-        # return ref_shape
 
     @classmethod
-    def shapes_mean(cls, shapes):
+    def mean_from_many(cls, shapes):
         """Finds the mean of a set of shapes"""
+        y = np.array([shape.points for shape in shapes])
+        return cls(np.mean(y, axis=2))
 
     @classmethod
     def translate_all_to_origin(cls, shapes):
@@ -103,18 +89,3 @@ class Shape:
         for shape in shapes:
             shape.align(ref_shape)
         return shapes
-
-
-def main():
-    s1 = Shape([(1, 2), (1, 3), (1, 4), (2, 4), (3, 4), (3, 3), (3, 2), (2,
-                                                                         2)])
-    s2 = Shape([(11, 2), (11, 3), (11, 4), (12, 4), (13, 4), (13, 3), (13, 2),
-                (12, 2)])
-    Shape.translate_all_to_origin([s1, s2])
-    s1.points
-    s2.points
-    s2.align(s1)
-
-
-if __name__ == '__main__':
-    main()

@@ -10,6 +10,9 @@ name = "pypi"
 numpy = "*"
 opencv-python = "*"
 yapf = "*"
+matplotlib = "*"
+scipy = "*"
+scikit-learn = "*"
 
 
 [dev-packages]
