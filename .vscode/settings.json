@@ -1,4 +1,12 @@
 {
   "python.formatting.provider": "yapf",
-  "python.pythonPath": "/Users/joao/.local/share/virtualenvs/xray_teeth_detection-k81GLxZV/bin/python"
+  "python.pythonPath": "/Users/gorjanradevski/.virtualenvs/xray_teeth_detection-AouQHnge/bin/python",
+  "python.unitTest.unittestArgs": [
+    "-v",
+    "-s",
+    "./src",
+    "-p",
+    "*_test.py"
+  ],
+  "python.unitTest.unittestEnabled": true
 }

@@ -1,7 +1,10 @@
 import cv2
-from shape import Shape
-from active_shape_model import ActiveShapeModel
 import matplotlib.pyplot as plt
+import numpy as np
+
+from active_shape_model import ActiveShapeModel
+from shape import Shape
+from shapeutils import plot_shape
 
 
 def show_labeler_window(cur_img,
@@ -36,7 +39,18 @@ def main():
     teeth = [Shape(tooth_points) for tooth_points in teeth_points]
     Shape.apply_procrustes(teeth)
 
-    ActiveShapeModel.from_shapes(teeth)
+    am = ActiveShapeModel.from_shapes(teeth)
+
+    shapes = []
+    for b in np.arange(-0.1 * am.eigenvalues[0], 0.1 * am.eigenvalues[0],
+                       0.2 * am.eigenvalues[0] / 4):
+        # bs = [0, 1, 2, 3, 5]
+        # for b in bs:
+        shape_params = np.zeros(len(am))
+        shape_params[0] = b
+        print(shape_params)
+        shapes.append(am.create_shape(shape_params))
+    plot_shape(shapes)
 
     # for tooth in teeth:
     #     plt.plot(tooth.points[:, 0], tooth.points[:, 1])

@@ -3,6 +3,7 @@
 from typing import List, Tuple
 
 import numpy as np
+from sklearn.decomposition import PCA
 
 from shape import Shape
 import shapeutils as util
@@ -14,9 +15,11 @@ class ActiveShapeModel:
     used to fit a new Shape to.
     """
 
-    def __init__(self, mean_shape: Shape, eigenvectors: np.ndarray):
+    def __init__(self, mean_shape: Shape, eigenvectors: np.ndarray,
+                 eigenvalues: np.ndarray):
         self.mean_shape = mean_shape
-        self.eigenvectors = np.abs(eigenvectors)
+        self.eigenvectors = np.real(eigenvectors)
+        self.eigenvalues = np.real(eigenvalues)
         self.origin = (0, 0)
 
     def __len__(self):
@@ -73,7 +76,8 @@ class ActiveShapeModel:
                 format(shape_parameters.shape, (len(self), )))
 
         mu = self.mean_shape.as_vector()
-        new_shape_points = mu + np.matmul(shape_parameters, self.eigenvectors)
+        P_b = np.matmul(np.transpose(self.eigenvectors), shape_parameters)
+        new_shape_points = mu + P_b
         return Shape.from_vector(new_shape_points)
 
     def update_shape_parameters(self, target_shape: Shape) -> np.ndarray:
@@ -102,14 +106,25 @@ class ActiveShapeModel:
         # Eigenvalues and eigenvectors of covariance matrix
         eigenvalues, eigenvectors = np.linalg.eig(cov_mat)
 
-        # Sort
-        sorted_indices = np.argsort(-eigenvalues)
+        pca_obj = PCA()
+        pca_obj.fit(shape_mat)
 
-        # Select eigenvectors according to eigenvalue sort and precision
-        selected_eigenvectors = np.array([
-            evec for idx, evec in enumerate(eigenvectors[sorted_indices])
-            if sum(eigenvalues[sorted_indices[:idx]]) /
-            sum(eigenvalues) < des_expvar_ratio
-        ])
+        # # Sort
+        # sorted_indices = np.argsort(-eigenvalues)
 
-        return cls(mean_shape, selected_eigenvectors)
+        # # Select eigenvectors according to eigenvalue sort and precision
+        # selected_eigenvectors = np.array([
+        #     evec for idx, evec in enumerate(eigenvectors[sorted_indices])
+        #     if sum(eigenvalues[sorted_indices[:idx]]) /
+        #     sum(eigenvalues) < des_expvar_ratio
+        # ])
+
+        # # Select eigenvalues according to eigenvalue sort and precision
+        # selected_eigenvalues = np.array([
+        #     evalue for idx, evalue in enumerate(eigenvalues[sorted_indices])
+        #     if sum(eigenvalues[sorted_indices[:idx]]) /
+        #     sum(eigenvalues) < des_expvar_ratio
+        # ])
+
+        return cls(mean_shape, pca_obj.components_,
+                   pca_obj.explained_variance_)
