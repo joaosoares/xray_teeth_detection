@@ -36,28 +36,23 @@ class ActiveShapeModel:
         converged = False
         all_est_shapes = []
         while not converged:
-            # 2. Generate the model point positions using x = x_mean + P*b
+            # Generate the model point positions using x = x_mean + P*b
             est_shape = self.create_shape(shape_params)
             all_est_shapes.append(est_shape)
 
             # Apply Procrustes method to align initial estimation to target shape
-            # Project target shape Y into the model coordinate frame by inverting the transformation T
             target_shape_copy = Shape.copy(target_shape)
             target_shape_copy.align(est_shape)
 
-            # 5. Project y into the tangent plane to x_mean by scaling y' = y/(y * x_mean)
-            # target_shape_copy.points = target_shape_copy.points / np.dot(
-            #     target_shape_copy.as_vector(), self.mean_shape.as_vector())
-
-            # 6. Update the model parameters to match to y'
+            # Update the model parameters to match to aligned target_shape
             prev_shape_params = shape_params
             shape_params = self.update_shape_parameters(target_shape_copy)
 
-            # 7. If not converged, return to step 2
+            # If not converged, rerun the loop
             converged = self.check_convergence(shape_params, prev_shape_params)
 
+        # Align estimated shape to the original target_shape to move it in the plane
         est_shape.align(target_shape)
-        # util.plot_shape(all_est_shapes)
         return est_shape
 
     @staticmethod
