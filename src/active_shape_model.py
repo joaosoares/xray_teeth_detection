@@ -46,8 +46,8 @@ class ActiveShapeModel:
             target_shape_copy.align(est_shape)
 
             # 5. Project y into the tangent plane to x_mean by scaling y' = y/(y * x_mean)
-            target_shape_copy.points = target_shape_copy.points / np.dot(
-                target_shape_copy.as_vector(), self.mean_shape.as_vector())
+            # target_shape_copy.points = target_shape_copy.points / np.dot(
+            #     target_shape_copy.as_vector(), self.mean_shape.as_vector())
 
             # 6. Update the model parameters to match to y'
             prev_shape_params = shape_params
@@ -56,11 +56,12 @@ class ActiveShapeModel:
             # 7. If not converged, return to step 2
             converged = self.check_convergence(shape_params, prev_shape_params)
 
-        util.plot_shape(all_est_shapes)
+        est_shape.align(target_shape)
+        # util.plot_shape(all_est_shapes)
         return est_shape
 
     @staticmethod
-    def check_convergence(shape_params, prev_shape_params, max_delta=0.000001):
+    def check_convergence(shape_params, prev_shape_params, max_delta=0.001):
         """
         Compares two sets of shape parameters and returns a boolean indicating
         whether their biggest difference is smaller than the maximum delta
