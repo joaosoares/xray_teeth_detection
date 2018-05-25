@@ -9,8 +9,7 @@
       "type": "python",
       "request": "launch",
       "program": "${file}",
-      "internalConsoleOptions": "openOnSessionStart",
-      "console": "none"
+      "internalConsoleOptions": "openOnSessionStart"
     },
     {
       "name": "Python: File \"src/testing.py\"",
