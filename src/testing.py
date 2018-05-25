@@ -31,5 +31,6 @@ es1 = am.match_target(s1)
 #     print(shape_params)
 #     shapes.append(am.create_shape(shape_params))
 
-# Shape.translate_all_to_origin([s1, s4])
 util.plot_shape([es1, s1])
+
+# s1.get_orthogonal_vectors()

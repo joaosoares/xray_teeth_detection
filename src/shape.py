@@ -5,12 +5,15 @@ from typing import List, NewType, Tuple, Union
 
 import cv2
 import numpy as np
+from scipy import interpolate
 
 Point = NewType('Point', int)  # Point does something
 
 
 class Shape:
-    def __init__(self, points: Union[List[Tuple[Point, Point]], np.ndarray]):
+    def __init__(self,
+                 points: Union[List[Tuple[Point, Point]], np.ndarray],
+                 gray_level_profiles=[]):
         self.points = np.array(points)
 
     def __len__(self):
@@ -83,6 +86,15 @@ class Shape:
 
     def translate_to_origin(self):
         self.points = self.points - self.axis_means()
+
+    def get_orthogonal_vectors(self):
+        """Returns the estimated orthogonal unit vectors of the shape"""
+        # TODO: make this work
+        x = np.arange(0, 2 * np.pi + np.pi / 4, 2 * np.pi / 8)
+        y = np.sin(x)
+        tck = interpolate.splrep(x, y, s=0)
+        xnew = np.arange(0, 2 * np.pi, np.pi / 50)
+        ynew = interpolate.splev(xnew, tck, der=0)
 
     @classmethod
     def apply_procrustes(cls, shapes):

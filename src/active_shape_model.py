@@ -29,9 +29,10 @@ class ActiveShapeModel:
         """
         return self.eigenvectors.shape[0]
 
-    def match_target(self, target_shape: Shape):
+    def match_target(self, target_shape: Shape, shape_params=None):
         """Matches an active model to a target Shape"""
-        shape_params = np.zeros(len(self))
+        if not shape_params:
+            shape_params = np.zeros(len(self))
 
         converged = False
         all_est_shapes = []
@@ -53,16 +54,7 @@ class ActiveShapeModel:
 
         # Align estimated shape to the original target_shape to move it in the plane
         est_shape.align(target_shape)
-        return est_shape
-
-    @staticmethod
-    def check_convergence(shape_params, prev_shape_params, max_delta=0.001):
-        """
-        Compares two sets of shape parameters and returns a boolean indicating
-        whether their biggest difference is smaller than the maximum delta
-        """
-        difference_array = np.abs(shape_params - prev_shape_params)
-        return np.max(difference_array) < max_delta
+        return est_shape, shape_params
 
     def create_shape(self, shape_parameters: np.ndarray):
         """Creates a shape from a set of b_parameters"""
@@ -70,16 +62,59 @@ class ActiveShapeModel:
             raise ValueError(
                 "Vector with B parameters is of size {} but expected size {}".
                 format(shape_parameters.shape, (len(self), )))
-
         mu = self.mean_shape.as_vector()
         P_b = np.matmul(np.transpose(self.eigenvectors), shape_parameters)
         new_shape_points = mu + P_b
         return Shape.from_vector(new_shape_points)
 
     def update_shape_parameters(self, target_shape: Shape) -> np.ndarray:
-        return np.matmul(
+        """Updates shape parameters to match target_shape"""
+        new_shape_parameters = np.matmul(
             target_shape.as_vector() - self.mean_shape.as_vector(),
             np.transpose(self.eigenvectors))
+        limits = 3 * np.sqrt(self.eigenvalues)
+        limited_shape_parameters = np.clip(new_shape_parameters, -limits,
+                                           limits)
+        return limited_shape_parameters
+
+    def fit_to_image(self, image, search_image, inital_estimate):
+        """
+        Receives an image and iterates the initial_estimate to accurately
+        fit the model in a region of that image.
+        """
+        # Initialize b=0, x=u
+        shape_params = np.zeros(len(self))
+        initial_estimate = self.mean_shape
+        # Start iterating
+        converged = False
+        est_shape_history = []
+        while not converged:
+            # Search around each xi for best nearby image point yi
+            suggested_shape = self.find_best_nearby_image_points(
+                search_image, initial_estimate)
+            # Save as current estimated_shape
+            estimated_shape, shape_params = self.match_target(
+                suggested_shape, shape_params)
+            est_shape_history.append(estimated_shape)
+            converged = self.check_convergence(
+                *[shape.points for shape in est_shape_history[-2:-1]])
+
+    def find_best_nearby_image_points(self, search_image, shape):
+        """
+        Returns new shape where points are shifted to better locations
+        according to the search_image information
+        """
+        # TODO: implement best nearby image points function
+        pass
+
+    @staticmethod
+    def check_convergence(array_1, array_2, max_delta=0.001):
+        """
+        Compares two numpy arrays and returns a boolean indicating
+        whether their biggest difference is smaller than the maximum delta
+        """
+        difference_array = np.abs(array_1 - array_2)
+        return np.max(difference_array) < max_delta
 
     @classmethod
     def from_shapes(cls, shapes: List[Shape], des_expvar_ratio=0.95):
@@ -104,23 +139,6 @@ class ActiveShapeModel:
 
         pca_obj = PCA()
         pca_obj.fit(shape_mat)
-
-        # # Sort
-        # sorted_indices = np.argsort(-eigenvalues)
-
-        # # Select eigenvectors according to eigenvalue sort and precision
-        # selected_eigenvectors = np.array([
-        #     evec for idx, evec in enumerate(eigenvectors[sorted_indices])
-        #     if sum(eigenvalues[sorted_indices[:idx]]) /
-        #     sum(eigenvalues) < des_expvar_ratio
-        # ])
-
-        # # Select eigenvalues according to eigenvalue sort and precision
-        # selected_eigenvalues = np.array([
-        #     evalue for idx, evalue in enumerate(eigenvalues[sorted_indices])
-        #     if sum(eigenvalues[sorted_indices[:idx]]) /
-        #     sum(eigenvalues) < des_expvar_ratio
-        # ])
 
         return cls(mean_shape, pca_obj.components_,
                    pca_obj.explained_variance_)
