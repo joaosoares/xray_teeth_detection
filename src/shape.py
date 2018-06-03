@@ -6,13 +6,12 @@ from typing import List, NewType, Tuple, Union
 import cv2
 import numpy as np
 from scipy import interpolate
-
-Point = NewType('Point', int)  # Point does something
+from point import Point
 
 
 class Shape:
     def __init__(self,
-                 points: Union[List[Tuple[Point, Point]], np.ndarray],
+                 points: Union[List[Point], np.ndarray],
                  gray_level_profiles=[]):
         self.points = np.array(points)
 
@@ -27,6 +26,18 @@ class Shape:
         """Returns points of shape as single-row np array"""
         # maybe new array creation unnecessary
         return np.reshape(np.array(self.points), (-1))
+
+    def as_point_list(self) -> List[Point]:
+        """Returns points as a list of named Point tuples"""
+        return [Point(*p) for p in self.points]
+
+    def x_vector(self):
+        """Returns all the x values for each point as a vector"""
+        return np.reshape(self.points[:, 0], (-1))
+
+    def y_vector(self):
+        """Returns all the y values for each point as a vector"""
+        return np.reshape(self.points[:, 1], (-1))
 
     # This function may have too much fluctuation
     def align(self, original_ref_shape, modify=True):
@@ -89,12 +100,31 @@ class Shape:
 
     def get_orthogonal_vectors(self):
         """Returns the estimated orthogonal unit vectors of the shape"""
-        # TODO: make this work
-        x = np.arange(0, 2 * np.pi + np.pi / 4, 2 * np.pi / 8)
-        y = np.sin(x)
-        tck = interpolate.splrep(x, y, s=0)
-        xnew = np.arange(0, 2 * np.pi, np.pi / 50)
-        ynew = interpolate.splev(xnew, tck, der=0)
+        x = self.x_vector()
+        y = self.y_vector()
+        per = len(self)
+        x = np.append(x, x[0])
+        y = np.append(y, y[0])
+
+        # Calculate cubic spline interpolation
+        tck, _ = interpolate.splprep([x, y], per=per)
+
+        # The parametric variable goes from [0, 1[ (since the last
+        # point is a repetition)
+        u = np.arange(0, 1, 1 / per)
+
+        # Get derivatives for each point
+        deriv_vecs = np.array(interpolate.splev(u, tck, der=1))
+
+        # Rotate each derivative 90 degrees
+        M = np.array([[0, -1], [1, 0]])
+        orth_vecs = np.matmul(M, deriv_vecs)
+
+        # Tranpose matrix and create list of vectors
+        transp_orth = np.transpose(orth_vecs)
+        vector_list = [Point(*i) for i in transp_orth]
+
+        return vector_list
 
     @classmethod
     def apply_procrustes(cls, shapes):
