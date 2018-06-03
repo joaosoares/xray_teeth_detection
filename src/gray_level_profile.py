@@ -1,18 +1,43 @@
 import cv2
 import numpy as np
 
+from typing import List, Tuple
+from point import Point
+
+from image_shape import ImageShape
+
 
 class GrayLevelProfile:
     """Represents a normalized set of points along an axis"""
 
-    def __init__(self, samples):
-        self.samples = self.normalize(samples)
+    def __init__(self, mean_profile, covariance):
+        self.mean_profile = mean_profile
+        self.covariance = covariance
+        self.inv_cov = np.inv(self.covariance)
 
-    def normalize(self, samples):
-        # TODO: Normalize grayscale level
-        return samples
+    def mahalanobis_distance(self, sample):
+        """Calculates the Mahalanobis distance of the sample to the GLP"""
+        error = sample - self.mean_profile
+        return np.transpose(error) @ self.inv_cov @ error
 
     @classmethod
+    def from_image_shapes(cls,
+                          images: List[ImageShape],
+                          points: List[Point],
+                          half_sampling_size: int = 8):
+        # numpy array to store all samples
+        point_norm_gradients = np.zeros((len(images),
+                                         half_sampling_size * 2 + 1))
+        # iterate over each sample
+        for idx, image_shape in enumerate(images):
+            vectors = image_shape.shape.get_orthogonal_vectors()
+            points = image_shape.shape.as_point_list()
+            for point, vector in zip(points, vectors):
+                point_norm_gradients[idx, :] = cls.get_point_norm_gradient(
+                    point[0], point[1], vector, half_sampling_size)
+        mean_vector = np.mean(point_norm_gradients, axis=0)
+        covariance = np.cov(point_norm_gradients, axis=0)
+        return cls(mean_vector, covariance)
 
     @classmethod
     def get_point_norm_gradient(cls, image, center_point, direction_vector,
