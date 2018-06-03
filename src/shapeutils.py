@@ -1,13 +1,15 @@
 # Assorted utilities for dealing with Shapes and ActiveShapeModels
 import matplotlib.pyplot as plt
+from matplotlib import collections
 import numpy as np
 
 from typing import List, Union
 
 from shape import Shape
+from point import Point
 
 
-def plot_shape(shapes: Union[Shape, List[Shape]]):
+def plot_shape(shapes: Union[Shape, List[Shape]], plot=True):
     """Plots a single shape or an array of shapes"""
     if type(shapes) is Shape:
         shapes: List[Shape] = [shapes]
@@ -19,4 +21,32 @@ def plot_shape(shapes: Union[Shape, List[Shape]]):
 
         plt.plot(x_values, y_values, '-o')
     plt.axes().set_aspect('equal', 'datalim')
-    plt.show()
+    if plot:
+        plt.show()
+
+
+def plot_vecs(vectors: Union[np.ndarray, List[np.ndarray]],
+              points: Union[Point, List[Point]],
+              plot=True):
+    """Plots a vector or an array of vectors centered around a point or
+    list of points."""
+    if type(vectors) is np.ndarray:
+        vectors = [vectors]
+    if type(points) is tuple:
+        points = [points]
+
+    if len(vectors) != len(points):
+        raise ValueError(
+            "Number of vectors is different from number of points")
+
+    lines = [[point, tuple(map(sum, zip(point, vector)))]
+             for vector, point in zip(vectors, points)]
+    print(lines)
+    lc = collections.LineCollection(lines)
+
+    _, ax = plt.subplots()
+    ax.add_collection(lc)
+    # ax.set_aspect('equal', 'datalim') #TODO fix axes scaling
+
+    if plot:
+        plt.show()
