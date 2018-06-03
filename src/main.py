@@ -1,33 +1,56 @@
+from enum import Enum
+
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
 from active_shape_model import ActiveShapeModel
+from image_shape import ImageShape
+from point import Point
 from shape import Shape
 from shapeutils import plot_shape
 
 
-def show_labeler_window(cur_img,
-                        landmark_pairs,
-                        prev_img=None,
-                        prev_img_points=None):
-    cv2.namedWindow('Training set labeler', cv2.WINDOW_KEEPRATIO)
-    # The first image in our set
-    if prev_img is None:
-        for pairs in landmark_pairs:
-            for pair in pairs:
-                cv2.circle(cur_img, pair, 3, (0, 255, 0))
-        cv2.imshow('Training set labeler', cur_img)
+class Incisors(Enum):
+    UPPER_OUTER_LEFT = 1
+    UPPER_INNER_LEFT = 2
+    UPPER_INNER_RIGHT = 3
+    UPPER_OUTER_RIGHT = 4
+    LOWER_OUTER_LEFT = 5
+    LOWER_INNER_LEFT = 6
+    LOWER_INNER_RIGHT = 7
+    LOWER_OUTER_RIGHT = 8
 
 
-def get_landmark_pairs(landmarks_filename):
-    with open(landmarks_filename) as f:
-        points = [int(float(x)) for x in f.readlines()]
-        it = iter(points)
-        return list(zip(it, it))
+def get_shape_from_file(image_index: int, incisor_index: int) -> Shape:
+    filename = './data/Landmarks/original/{%2d}-{%d}'.format(
+        image_index, incisor_index)
+    with open(filename) as f:
+        coordinates = [int(float(x)) for x in f.readlines()]
+        coord_iter = iter(coordinates)
+        points = [Point(*p) for p in zip(coord_iter, coord_iter)]
+        return Shape(points)
 
 
 def main():
+    # Import all training images
+    image_filenames = [
+        "./data/Radiographs/{%2d}".format(i) for i in range(1, 15)
+    ]
+    images = [cv2.imread(filename) for filename in image_filenames]
+
+    active_shape_models = {}
+    # For each out of the 8 shapes, create imageshape for all training images
+    for incisor in Incisors:
+
+        image_shapes = [
+            ImageShape(image, get_shape_from_file(i, incisor))
+            for image, i in enumerate(images, 1)
+        ]
+        active_shape_models[incisor] = ActiveShapeModel.from_image_shapes(
+            image_shapes)
+
+    # For each training image, import its landmarks and
     # base_path = './data/Radiographs/'
     landmarks_path = './data/Landmarks/original/'
     # cur_img = cv2.imread(base_path + '01.tif')
@@ -36,10 +59,11 @@ def main():
         teeth_points.append(
             get_landmark_pairs(landmarks_path + "landmarks{}-1.txt".format(i)))
 
-    teeth = [Shape(tooth_points) for tooth_points in teeth_points]
-    Shape.apply_procrustes(teeth)
+    tooth_shapes = [Shape(tooth_points) for tooth_points in teeth_points]
 
-    am = ActiveShapeModel.from_shapes(teeth)
+    Shape.apply_procrustes(tooth_shapes)
+
+    am = ActiveShapeModel.from_imageshapes(tooth_shapes)
 
     shapes = []
     for b in np.arange(-0.1 * am.eigenvalues[0], 0.1 * am.eigenvalues[0],
