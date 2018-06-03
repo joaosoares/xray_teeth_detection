@@ -7,6 +7,8 @@ from sklearn.decomposition import PCA
 
 from shape import Shape
 import shapeutils as util
+from gray_level_profile import GrayLevelProfile
+from image_shape import ImageShape
 
 
 class ActiveShapeModel:
@@ -16,11 +18,11 @@ class ActiveShapeModel:
     """
 
     def __init__(self, mean_shape: Shape, eigenvectors: np.ndarray,
-                 eigenvalues: np.ndarray):
+                 eigenvalues: np.ndarray, profiles: List[GrayLevelProfile]):
         self.mean_shape = mean_shape
         self.eigenvectors = np.real(eigenvectors)
         self.eigenvalues = np.real(eigenvalues)
-        self.origin = (0, 0)
+        self.gray_level_profiles = profiles
 
     def __len__(self):
         """
@@ -142,3 +144,31 @@ class ActiveShapeModel:
 
         return cls(mean_shape, pca_obj.components_,
                    pca_obj.explained_variance_)
+
+    @classmethod
+    def from_image_shapes(cls,
+                          image_shapes: List[ImageShape],
+                          des_expvar_ratio=0.95):
+        """
+        Creates an ActiveShapeModel instance by finding the mean of
+        a list of Shapes, then applying PCA to the list to derive the
+        parameters with highest variance. Finally, we filter the eigenvalues
+        by order of variance until we reach the desired explained
+        variance.
+        """
+        # Get shapes
+        shapes = [image_shape.image for image_shape in image_shapes]
+        # Find mean shape
+        mean_shape = Shape.mean_from_many(shapes)
+        mean_shape.translate_to_origin()
+        # Create matrix from all shapes
+        shape_mat = np.array(
+            [np.reshape(shape.points, (-1)) for shape in shapes])
+
+        pca_obj = PCA()
+        pca_obj.fit(shape_mat)
+
+        profiles = GrayLevelProfile.all_from_image_shapes(image_shapes)
+
+        return cls(mean_shape, pca_obj.components_,
+                   pca_obj.explained_variance_, profiles)
