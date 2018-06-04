@@ -27,9 +27,8 @@ test_images = {
 
 class GrayLevelProfileTest(unittest.TestCase):
     def test_rotate_and_center_image(self):
-        im = test_images['center_diagonal_line']
-        res_img, _, _ = GrayLevelProfile.rotate_and_center_image(
-            im, (2, 2), (1, 1))
+        im = test_images["center_diagonal_line"]
+        res_img, _, _ = GrayLevelProfile.rotate_and_center_image(im, (2, 2), (1, 1))
         cv2.imwrite("./glp_test.png", res_img)
 
     def test_all_from_image_shapes(self):

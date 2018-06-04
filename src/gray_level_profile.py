@@ -21,35 +21,38 @@ class GrayLevelProfile:
         return np.transpose(error) @ self.inv_cov @ error
 
     @classmethod
-    def from_image_shapes(cls,
-                          images: List[ImageShape],
-                          points: List[Point],
-                          half_sampling_size: int = 8):
+    def from_image_shapes(
+        cls, images: List[ImageShape], points: List[Point], half_sampling_size: int = 8
+    ):
         # numpy array to store all samples
-        point_norm_gradients = np.zeros((len(images),
-                                         half_sampling_size * 2 + 1))
+        point_norm_gradients = np.zeros((len(images), half_sampling_size * 2 + 1))
         # iterate over each sample
         for idx, image_shape in enumerate(images):
             vectors = image_shape.shape.get_orthogonal_vectors()
             points = image_shape.shape.as_point_list()
             for point, vector in zip(points, vectors):
                 point_norm_gradients[idx, :] = cls.get_point_norm_gradient(
-                    point[0], point[1], vector, half_sampling_size)
+                    point[0], point[1], vector, half_sampling_size
+                )
         mean_vector = np.mean(point_norm_gradients, axis=0)
-        covariance = np.cov(point_norm_gradients, axis=0)
+        covariance = np.cov(point_norm_gradients)
         return cls(mean_vector, covariance)
 
     @classmethod
-    def get_point_norm_gradient(cls, image, center_point, direction_vector,
-                                half_sampling_size) -> np.ndarray:
+    def get_point_norm_gradient(
+        cls, image, center_point, direction_vector, half_sampling_size
+    ) -> np.ndarray:
         """Extracts the normalized gradient of a vector along the specified
         direction and centerpoint of an image.
         """
         rot_img, x_center, y_center = cls.rotate_and_center_image(
-            image, center_point, direction_vector)
+            image, center_point, direction_vector
+        )
         # Create array spanning from (0, -k) to (0, k)
-        samples = rot_img[x_center, (y_center - half_sampling_size):(
-            y_center + half_sampling_size + 1)]
+        samples = rot_img[
+            x_center,
+            (y_center - half_sampling_size) : (y_center + half_sampling_size + 1),
+        ]
         print(samples)
 
         # Take derivative and normalize

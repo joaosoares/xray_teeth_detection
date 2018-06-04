@@ -1,4 +1,4 @@
-'''Procrustes method library'''
+"""Procrustes method library"""
 
 from itertools import chain
 from typing import List, NewType, Tuple, Union
@@ -10,9 +10,7 @@ from point import Point
 
 
 class Shape:
-    def __init__(self,
-                 points: Union[List[Point], np.ndarray],
-                 gray_level_profiles=[]):
+    def __init__(self, points: Union[List[Point], np.ndarray], gray_level_profiles=[]):
         self.points = np.array(points)
 
     def __len__(self):
@@ -58,26 +56,29 @@ class Shape:
 
         # a coefficient
         a = np.dot(
-            np.reshape(self.points,
-                       (-1)), np.reshape(centered_ref_shape.points,
-                                         (-1))) / (self.norm()**2)
+            np.reshape(self.points, (-1)), np.reshape(centered_ref_shape.points, (-1))
+        ) / (self.norm() ** 2)
         # b coefficient
         n = len(self)
         b_sum = 0
         for i in range(n):
-            b_sum += (self.points[i][0] * centered_ref_shape.points[i][1] -
-                      centered_ref_shape.points[i][0] * self.points[i][1])
-        b = b_sum / (self.norm()**2)
+            b_sum += (
+                self.points[i][0] * centered_ref_shape.points[i][1]
+                - centered_ref_shape.points[i][0] * self.points[i][1]
+            )
+        b = b_sum / (self.norm() ** 2)
         # s and theta coeffs
-        s = np.sqrt(a**2 + b**2)
+        s = np.sqrt(a ** 2 + b ** 2)
         theta = np.tanh(b / a)
         # rotation matrix
-        rot_mat = np.array([(np.cos(theta), np.sin(theta)), (-np.sin(theta),
-                                                             np.cos(theta))])
+        rot_mat = np.array(
+            [(np.cos(theta), np.sin(theta)), (-np.sin(theta), np.cos(theta))]
+        )
 
         # translation matrix
         translation_cell = np.array(
-            [original_ref_shape.axis_means() - self.axis_means()])
+            [original_ref_shape.axis_means() - self.axis_means()]
+        )
         transl_mat = np.repeat(translation_cell, len(self), axis=0)
 
         # final point calculation, only if we want to modify the current shape
@@ -86,7 +87,8 @@ class Shape:
 
         # Ammend translation matrix with original means
         translation_cell = np.array(
-            [original_ref_shape.axis_means() - original_axis_means])
+            [original_ref_shape.axis_means() - original_axis_means]
+        )
         transl_mat = np.repeat(translation_cell, len(self), axis=0)
 
         return s, rot_mat, transl_mat
@@ -132,7 +134,7 @@ class Shape:
         # Translate all shapes to be centered at (0, 0)
         Shape.translate_all_to_origin(shapes)
         ref_shape, *_ = shapes
-        # Rotate, scale and translate each shape to align with the first shape in the set
+        # Rotate, scale and translate each shape to align with the first shape in theset
         cls.align_many(ref_shape, shapes)
 
     @classmethod

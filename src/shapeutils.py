@@ -19,15 +19,17 @@ def plot_shape(shapes: Union[Shape, List[Shape]], plot=True):
         x_values = np.append(shape.points[:, 0], shape.points[:, 0][0])
         y_values = np.append(shape.points[:, 1], shape.points[:, 1][0])
 
-        plt.plot(x_values, y_values, '-o')
-    plt.axes().set_aspect('equal', 'datalim')
+        plt.plot(x_values, y_values, "-o")
+    plt.axes().set_aspect("equal", "datalim")
     if plot:
         plt.show()
 
 
-def plot_vecs(vectors: Union[np.ndarray, List[np.ndarray]],
-              points: Union[Point, List[Point]],
-              plot=True):
+def plot_vecs(
+    vectors: Union[np.ndarray, List[np.ndarray]],
+    points: Union[Point, List[Point]],
+    plot=True,
+):
     """Plots a vector or an array of vectors centered around a point or
     list of points."""
     if type(vectors) is np.ndarray:
@@ -36,11 +38,12 @@ def plot_vecs(vectors: Union[np.ndarray, List[np.ndarray]],
         points = [points]
 
     if len(vectors) != len(points):
-        raise ValueError(
-            "Number of vectors is different from number of points")
+        raise ValueError("Number of vectors is different from number of points")
 
-    lines = [[point, tuple(map(sum, zip(point, vector)))]
-             for vector, point in zip(vectors, points)]
+    lines = [
+        [point, tuple(map(sum, zip(point, vector)))]
+        for vector, point in zip(vectors, points)
+    ]
     print(lines)
     lc = collections.LineCollection(lines)
 

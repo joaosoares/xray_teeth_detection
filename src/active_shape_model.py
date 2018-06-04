@@ -17,8 +17,13 @@ class ActiveShapeModel:
     used to fit a new Shape to.
     """
 
-    def __init__(self, mean_shape: Shape, eigenvectors: np.ndarray,
-                 eigenvalues: np.ndarray, profiles: List[GrayLevelProfile]):
+    def __init__(
+        self,
+        mean_shape: Shape,
+        eigenvectors: np.ndarray,
+        eigenvalues: np.ndarray,
+        profiles: List[GrayLevelProfile],
+    ):
         self.mean_shape = mean_shape
         self.eigenvectors = np.real(eigenvectors)
         self.eigenvalues = np.real(eigenvalues)
@@ -60,10 +65,12 @@ class ActiveShapeModel:
 
     def create_shape(self, shape_parameters: np.ndarray):
         """Creates a shape from a set of b_parameters"""
-        if shape_parameters.shape != (len(self), ):
+        if shape_parameters.shape != (len(self),):
             raise ValueError(
-                "Vector with B parameters is of size {} but expected size {}".
-                format(shape_parameters.shape, (len(self), )))
+                "Vector with B parameters is of size {} but expected size {}".format(
+                    shape_parameters.shape, (len(self),)
+                )
+            )
         mu = self.mean_shape.as_vector()
         P_b = np.matmul(np.transpose(self.eigenvectors), shape_parameters)
         new_shape_points = mu + P_b
@@ -73,10 +80,10 @@ class ActiveShapeModel:
         """Updates shape parameters to match target_shape"""
         new_shape_parameters = np.matmul(
             target_shape.as_vector() - self.mean_shape.as_vector(),
-            np.transpose(self.eigenvectors))
+            np.transpose(self.eigenvectors),
+        )
         limits = 3 * np.sqrt(self.eigenvalues)
-        limited_shape_parameters = np.clip(new_shape_parameters, -limits,
-                                           limits)
+        limited_shape_parameters = np.clip(new_shape_parameters, -limits, limits)
         return limited_shape_parameters
 
     def fit_to_image(self, image, search_image, inital_estimate):
@@ -93,13 +100,16 @@ class ActiveShapeModel:
         while not converged:
             # Search around each xi for best nearby image point yi
             suggested_shape = self.find_best_nearby_image_points(
-                search_image, initial_estimate)
+                search_image, initial_estimate
+            )
             # Save as current estimated_shape
             estimated_shape, shape_params = self.match_target(
-                suggested_shape, shape_params)
+                suggested_shape, shape_params
+            )
             est_shape_history.append(estimated_shape)
             converged = self.check_convergence(
-                *[shape.points for shape in est_shape_history[-2:-1]])
+                *[shape.points for shape in est_shape_history[-2:-1]]
+            )
 
     def find_best_nearby_image_points(self, search_image, shape):
         """
@@ -131,8 +141,7 @@ class ActiveShapeModel:
         mean_shape = Shape.mean_from_many(shapes)
         mean_shape.translate_to_origin()
         # Create matrix from all shapes
-        shape_mat = np.array(
-            [np.reshape(shape.points, (-1)) for shape in shapes])
+        shape_mat = np.array([np.reshape(shape.points, (-1)) for shape in shapes])
 
         # Compute covariance matrix
         cov_mat = np.cov(np.transpose(shape_mat))
@@ -142,13 +151,10 @@ class ActiveShapeModel:
         pca_obj = PCA()
         pca_obj.fit(shape_mat)
 
-        return cls(mean_shape, pca_obj.components_,
-                   pca_obj.explained_variance_)
+        return cls(mean_shape, pca_obj.components_, pca_obj.explained_variance_)
 
     @classmethod
-    def from_image_shapes(cls,
-                          image_shapes: List[ImageShape],
-                          des_expvar_ratio=0.95):
+    def from_image_shapes(cls, image_shapes: List[ImageShape], des_expvar_ratio=0.95):
         """
         Creates an ActiveShapeModel instance by finding the mean of
         a list of Shapes, then applying PCA to the list to derive the
@@ -162,13 +168,13 @@ class ActiveShapeModel:
         mean_shape = Shape.mean_from_many(shapes)
         mean_shape.translate_to_origin()
         # Create matrix from all shapes
-        shape_mat = np.array(
-            [np.reshape(shape.points, (-1)) for shape in shapes])
+        shape_mat = np.array([np.reshape(shape.points, (-1)) for shape in shapes])
 
         pca_obj = PCA()
         pca_obj.fit(shape_mat)
 
         profiles = GrayLevelProfile.all_from_image_shapes(image_shapes)
 
-        return cls(mean_shape, pca_obj.components_,
-                   pca_obj.explained_variance_, profiles)
+        return cls(
+            mean_shape, pca_obj.components_, pca_obj.explained_variance_, profiles
+        )

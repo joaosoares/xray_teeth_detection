@@ -23,8 +23,7 @@ class Incisors(Enum):
 
 
 def get_shape_from_file(image_index: int, incisor_index: int) -> Shape:
-    filename = './data/Landmarks/original/{%2d}-{%d}'.format(
-        image_index, incisor_index)
+    filename = "./data/Landmarks/original/{%2d}-{%d}".format(image_index, incisor_index)
     with open(filename) as f:
         coordinates = [int(float(x)) for x in f.readlines()]
         coord_iter = iter(coordinates)
@@ -34,9 +33,7 @@ def get_shape_from_file(image_index: int, incisor_index: int) -> Shape:
 
 def main():
     # Import all training images
-    image_filenames = [
-        "./data/Radiographs/{%2d}".format(i) for i in range(1, 15)
-    ]
+    image_filenames = ["./data/Radiographs/{%2d}".format(i) for i in range(1, 15)]
     images = [cv2.imread(filename) for filename in image_filenames]
 
     active_shape_models = {}
@@ -47,17 +44,17 @@ def main():
             ImageShape(image, get_shape_from_file(i, incisor))
             for image, i in enumerate(images, 1)
         ]
-        active_shape_models[incisor] = ActiveShapeModel.from_image_shapes(
-            image_shapes)
+        active_shape_models[incisor] = ActiveShapeModel.from_image_shapes(image_shapes)
 
     # For each training image, import its landmarks and
     # base_path = './data/Radiographs/'
-    landmarks_path = './data/Landmarks/original/'
+    landmarks_path = "./data/Landmarks/original/"
     # cur_img = cv2.imread(base_path + '01.tif')
     teeth_points = []
     for i in range(1, 15):
         teeth_points.append(
-            get_landmark_pairs(landmarks_path + "landmarks{}-1.txt".format(i)))
+            get_landmark_pairs(landmarks_path + "landmarks{}-1.txt".format(i))
+        )
 
     tooth_shapes = [Shape(tooth_points) for tooth_points in teeth_points]
 
@@ -66,8 +63,9 @@ def main():
     am = ActiveShapeModel.from_imageshapes(tooth_shapes)
 
     shapes = []
-    for b in np.arange(-0.1 * am.eigenvalues[0], 0.1 * am.eigenvalues[0],
-                       0.2 * am.eigenvalues[0] / 4):
+    for b in np.arange(
+        -0.1 * am.eigenvalues[0], 0.1 * am.eigenvalues[0], 0.2 * am.eigenvalues[0] / 4
+    ):
         # bs = [0, 1, 2, 3, 5]
         # for b in bs:
         shape_params = np.zeros(len(am))
@@ -81,5 +79,5 @@ def main():
     # plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

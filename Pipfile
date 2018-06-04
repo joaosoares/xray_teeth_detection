@@ -19,6 +19,7 @@ scikit-learn = "*"
 
 pylint = "*"
 rope = "*"
+black = "*"
 
 
 [requires]
