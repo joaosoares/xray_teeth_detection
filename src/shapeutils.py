@@ -9,7 +9,7 @@ from shape import Shape
 from point import Point
 
 
-def plot_shape(shapes: Union[Shape, List[Shape]], plot=True):
+def plot_shape(shapes: Union[Shape, List[Shape]], overlay_image=None, plot=True):
     """Plots a single shape or an array of shapes"""
     if type(shapes) is Shape:
         shapes: List[Shape] = [shapes]
@@ -20,6 +20,10 @@ def plot_shape(shapes: Union[Shape, List[Shape]], plot=True):
         y_values = np.append(shape.points[:, 1], shape.points[:, 1][0])
 
         plt.plot(x_values, y_values, "-o")
+
+    if overlay_image is not None:
+        plt.imshow(overlay_image)
+
     plt.axes().set_aspect("equal", "datalim")
     if plot:
         plt.show()
@@ -47,9 +51,8 @@ def plot_vecs(
     print(lines)
     lc = collections.LineCollection(lines)
 
-    _, ax = plt.subplots()
-    ax.add_collection(lc)
-    # ax.set_aspect('equal', 'datalim') #TODO fix axes scaling
+    plt.axes().add_collection(lc)
+    plt.axes().set_aspect("equal", "datalim")
 
     if plot:
         plt.show()

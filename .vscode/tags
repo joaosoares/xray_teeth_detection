@@ -1,0 +1,186 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ActiveShapeModel	../src/active_shape_model.py	/^class ActiveShapeModel:$/;"	kind:class	line:15
+ActiveShapeModel	../src/active_shape_model_test.py	/^from active_shape_model import ActiveShapeModel$/;"	kind:namespace	line:7
+ActiveShapeModel	../src/main.py	/^from active_shape_model import ActiveShapeModel$/;"	kind:namespace	line:7
+ActiveShapeModel	../src/testing.py	/^from active_shape_model import ActiveShapeModel$/;"	kind:namespace	line:4
+ActiveShapeModelTest	../src/active_shape_model_test.py	/^class ActiveShapeModelTest(unittest.TestCase):$/;"	kind:class	line:11
+Enum	../src/main.py	/^from enum import Enum$/;"	kind:namespace	line:1
+GrayLevelProfile	../src/active_shape_model.py	/^from gray_level_profile import GrayLevelProfile$/;"	kind:namespace	line:10
+GrayLevelProfile	../src/gray_level_profile.py	/^class GrayLevelProfile:$/;"	kind:class	line:11
+GrayLevelProfile	../src/gray_level_profile_test.py	/^from gray_level_profile import GrayLevelProfile$/;"	kind:namespace	line:7
+GrayLevelProfileTest	../src/gray_level_profile_test.py	/^class GrayLevelProfileTest(unittest.TestCase):$/;"	kind:class	line:11
+ImageShape	../src/active_shape_model.py	/^from image_shape import ImageShape$/;"	kind:namespace	line:11
+ImageShape	../src/gray_level_profile.py	/^from image_shape import ImageShape$/;"	kind:namespace	line:7
+ImageShape	../src/image_shape.py	/^class ImageShape(NamedTuple):$/;"	kind:class	line:8
+ImageShape	../src/main.py	/^from image_shape import ImageShape$/;"	kind:namespace	line:8
+ImageShape	../src/testutils.py	/^from image_shape import ImageShape$/;"	kind:namespace	line:4
+Incisors	../src/main.py	/^class Incisors(Enum):$/;"	kind:class	line:14
+LOWER_INNER_LEFT	../src/main.py	/^    LOWER_INNER_LEFT = 6$/;"	kind:variable	line:20
+LOWER_INNER_RIGHT	../src/main.py	/^    LOWER_INNER_RIGHT = 7$/;"	kind:variable	line:21
+LOWER_OUTER_LEFT	../src/main.py	/^    LOWER_OUTER_LEFT = 5$/;"	kind:variable	line:19
+LOWER_OUTER_RIGHT	../src/main.py	/^    LOWER_OUTER_RIGHT = 8$/;"	kind:variable	line:22
+List	../src/active_shape_model.py	/^from typing import List, Tuple$/;"	kind:namespace	line:4
+List	../src/gray_level_profile.py	/^from typing import List, Tuple$/;"	kind:namespace	line:4
+List	../src/shape.py	/^from typing import List, NewType, Tuple, Union$/;"	kind:namespace	line:4
+List	../src/shapeutils.py	/^from typing import List, Union$/;"	kind:namespace	line:6
+NamedTuple	../src/image_shape.py	/^from typing import NamedTuple$/;"	kind:namespace	line:1
+NewType	../src/shape.py	/^from typing import List, NewType, Tuple, Union$/;"	kind:namespace	line:4
+PCA	../src/active_shape_model.py	/^from sklearn.decomposition import PCA$/;"	kind:namespace	line:7
+PCA	../src/active_shape_model_test.py	/^from sklearn.decomposition import PCA$/;"	kind:namespace	line:5
+Point	../src/gray_level_profile.py	/^from point import Point$/;"	kind:namespace	line:5
+Point	../src/main.py	/^from point import Point$/;"	kind:namespace	line:9
+Point	../src/point.py	/^Point = namedtuple("Point", ["x", "y"])$/;"	kind:variable	line:5
+Point	../src/shape.py	/^from point import Point$/;"	kind:namespace	line:9
+Point	../src/shape_test.py	/^from point import Point$/;"	kind:namespace	line:6
+Point	../src/shapeutils.py	/^from point import Point$/;"	kind:namespace	line:9
+Shape	../src/active_shape_model.py	/^from shape import Shape$/;"	kind:namespace	line:12
+Shape	../src/active_shape_model_test.py	/^from shape import Shape$/;"	kind:namespace	line:8
+Shape	../src/image_shape.py	/^from shape import Shape$/;"	kind:namespace	line:5
+Shape	../src/main.py	/^from shape import Shape$/;"	kind:namespace	line:10
+Shape	../src/shape.py	/^class Shape:$/;"	kind:class	line:12
+Shape	../src/shape_test.py	/^from shape import Shape$/;"	kind:namespace	line:7
+Shape	../src/shapeutils.py	/^from shape import Shape$/;"	kind:namespace	line:8
+Shape	../src/testing.py	/^from shape import Shape$/;"	kind:namespace	line:5
+Shape	../src/testutils.py	/^from shape import Shape$/;"	kind:namespace	line:5
+ShapeTest	../src/shape_test.py	/^class ShapeTest(unittest.TestCase):$/;"	kind:class	line:11
+ShapeutilsTest	../src/shapeutils_test.py	/^class ShapeutilsTest(unittest.TestCase):$/;"	kind:class	line:6
+Tuple	../src/active_shape_model.py	/^from typing import List, Tuple$/;"	kind:namespace	line:4
+Tuple	../src/gray_level_profile.py	/^from typing import List, Tuple$/;"	kind:namespace	line:4
+Tuple	../src/shape.py	/^from typing import List, NewType, Tuple, Union$/;"	kind:namespace	line:4
+UPPER_INNER_LEFT	../src/main.py	/^    UPPER_INNER_LEFT = 2$/;"	kind:variable	line:16
+UPPER_INNER_RIGHT	../src/main.py	/^    UPPER_INNER_RIGHT = 3$/;"	kind:variable	line:17
+UPPER_OUTER_LEFT	../src/main.py	/^    UPPER_OUTER_LEFT = 1$/;"	kind:variable	line:15
+UPPER_OUTER_RIGHT	../src/main.py	/^    UPPER_OUTER_RIGHT = 4$/;"	kind:variable	line:18
+Union	../src/shape.py	/^from typing import List, NewType, Tuple, Union$/;"	kind:namespace	line:4
+Union	../src/shapeutils.py	/^from typing import List, Union$/;"	kind:namespace	line:6
+__init__	../src/active_shape_model.py	/^    def __init__($/;"	kind:member	line:26
+__init__	../src/gray_level_profile.py	/^    def __init__(self, mean_profile, covariance, half_sampling_size):$/;"	kind:member	line:14
+__init__	../src/shape.py	/^    def __init__(self, points: Union[List[Point], np.ndarray], gray_level_profiles=[]):$/;"	kind:member	line:13
+__len__	../src/active_shape_model.py	/^    def __len__(self):$/;"	kind:member	line:38
+__len__	../src/shape.py	/^    def __len__(self):$/;"	kind:member	line:16
+active_shape_model.py	../src/active_shape_model.py	1;"	kind:file	line:1
+active_shape_model_test.py	../src/active_shape_model_test.py	1;"	kind:file	line:1
+align	../src/shape.py	/^    def align(self, original_ref_shape, modify=True):$/;"	kind:member	line:41
+align_many	../src/shape.py	/^    def align_many(cls, ref_shape, shapes):$/;"	kind:member	line:154
+am	../src/testing.py	/^am = ActiveShapeModel.from_shapes([s1, s2, s3, s4, s5, s6])$/;"	kind:variable	line:22
+apply_procrustes	../src/shape.py	/^    def apply_procrustes(cls, shapes):$/;"	kind:member	line:132
+as_point_list	../src/shape.py	/^    def as_point_list(self) -> List[Point]:$/;"	kind:member	line:28
+as_vector	../src/shape.py	/^    def as_vector(self) -> np.ndarray:$/;"	kind:member	line:23
+axis_means	../src/shape.py	/^    def axis_means(self):$/;"	kind:member	line:96
+chain	../src/gray_level_profile.py	/^from itertools import chain$/;"	kind:namespace	line:8
+chain	../src/shape.py	/^from itertools import chain$/;"	kind:namespace	line:3
+check_convergence	../src/active_shape_model.py	/^    def check_convergence(array_1, array_2, max_delta=0.001):$/;"	kind:member	line:129
+collections	../src/shapeutils.py	/^from matplotlib import collections$/;"	kind:namespace	line:3
+copy	../src/shape.py	/^    def copy(cls, source):$/;"	kind:member	line:165
+create_circle_at_origin	../src/testutils.py	/^def create_circle_at_origin(l: int = 50, r: int = 20, m: int = 40) -> np.ndarray:$/;"	kind:function	line:18
+create_diagonal_test_image	../src/testutils.py	/^def create_diagonal_test_image(l: int) -> np.ndarray:$/;"	kind:function	line:8
+create_shape	../src/active_shape_model.py	/^    def create_shape(self, shape_parameters: np.ndarray):$/;"	kind:member	line:72
+cv2	../src/gray_level_profile.py	/^import cv2$/;"	kind:namespace	line:1
+cv2	../src/gray_level_profile_test.py	/^import cv2$/;"	kind:namespace	line:2
+cv2	../src/main.py	/^import cv2$/;"	kind:namespace	line:3
+cv2	../src/shape.py	/^import cv2$/;"	kind:namespace	line:6
+cv2	../src/testutils.py	/^import cv2$/;"	kind:namespace	line:2
+cv2	../src/ui.py	/^import cv2$/;"	kind:namespace	line:1
+es1	../src/testing.py	/^es1 = am.match_target(s1)$/;"	kind:variable	line:24
+find_best_nearby_image_points	../src/active_shape_model.py	/^    def find_best_nearby_image_points(self, search_image, shape):$/;"	kind:member	line:120
+fit_to_image	../src/active_shape_model.py	/^    def fit_to_image(self, image, search_image, inital_estimate):$/;"	kind:member	line:95
+from_image_shapes	../src/active_shape_model.py	/^    def from_image_shapes(cls, image_shapes: List[ImageShape], des_expvar_ratio=0.95):$/;"	kind:member	line:158
+from_image_shapes	../src/gray_level_profile.py	/^    def from_image_shapes(cls, images: List[ImageShape], half_sampling_size: int = 20):$/;"	kind:member	line:59
+from_shapes	../src/active_shape_model.py	/^    def from_shapes(cls, shapes: List[Shape], des_expvar_ratio=0.95):$/;"	kind:member	line:138
+from_vector	../src/shape.py	/^    def from_vector(cls, vector: np.ndarray):$/;"	kind:member	line:161
+get_orthogonal_vectors	../src/shape.py	/^    def get_orthogonal_vectors(self):$/;"	kind:member	line:103
+get_point_position	../src/gray_level_profile.py	/^    def get_point_position($/;"	kind:member	line:26
+get_shape_from_file	../src/main.py	/^def get_shape_from_file(image_index: int, incisor_index: int) -> Shape:$/;"	kind:function	line:25
+gray_level_profile.py	../src/gray_level_profile.py	1;"	kind:file	line:1
+gray_level_profile_test.py	../src/gray_level_profile_test.py	1;"	kind:file	line:1
+image_shape.py	../src/image_shape.py	1;"	kind:file	line:1
+interpolate	../src/shape.py	/^from scipy import interpolate$/;"	kind:namespace	line:8
+lc	../src/shapeutils.py	/^    lc = collections.LineCollection(lines)$/;"	kind:variable	line:48
+lines	../src/shapeutils.py	/^    lines = [$/;"	kind:variable	line:43
+mahalanobis_distance	../src/gray_level_profile.py	/^    def mahalanobis_distance(self, sample: np.ndarray):$/;"	kind:member	line:21
+main	../src/main.py	/^def main():$/;"	kind:function	line:36
+main.py	../src/main.py	1;"	kind:file	line:1
+match_target	../src/active_shape_model.py	/^    def match_target(self, target_shape: Shape, shape_params=None):$/;"	kind:member	line:45
+matplotlib	../src/main.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:4
+matplotlib	../src/shapeutils.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:2
+mean_from_many	../src/shape.py	/^    def mean_from_many(cls, shapes):$/;"	kind:member	line:141
+namedtuple	../src/point.py	/^from collections import namedtuple$/;"	kind:namespace	line:1
+norm	../src/shape.py	/^    def norm(self):$/;"	kind:member	line:19
+normalize	../src/gray_level_profile.py	/^    def normalize(samples):$/;"	kind:member	line:127
+np	../src/active_shape_model.py	/^import numpy as np$/;"	kind:namespace	line:6
+np	../src/active_shape_model_test.py	/^import numpy as np$/;"	kind:namespace	line:3
+np	../src/gray_level_profile.py	/^import numpy as np$/;"	kind:namespace	line:2
+np	../src/gray_level_profile_test.py	/^import numpy as np$/;"	kind:namespace	line:4
+np	../src/image_shape.py	/^import numpy as np$/;"	kind:namespace	line:3
+np	../src/main.py	/^import numpy as np$/;"	kind:namespace	line:5
+np	../src/shape.py	/^import numpy as np$/;"	kind:namespace	line:7
+np	../src/shape_test.py	/^import numpy as np$/;"	kind:namespace	line:3
+np	../src/shapeutils.py	/^import numpy as np$/;"	kind:namespace	line:4
+np	../src/testing.py	/^import numpy as np$/;"	kind:namespace	line:1
+np	../src/testutils.py	/^import numpy as np$/;"	kind:namespace	line:1
+npt	../src/active_shape_model_test.py	/^import numpy.testing as npt$/;"	kind:namespace	line:4
+npt	../src/gray_level_profile_test.py	/^import numpy.testing as npt$/;"	kind:namespace	line:5
+npt	../src/shape_test.py	/^import numpy.testing as npt$/;"	kind:namespace	line:4
+numpy	../src/active_shape_model_test.py	/^import numpy.testing as npt$/;"	kind:namespace	line:4
+numpy	../src/gray_level_profile_test.py	/^import numpy.testing as npt$/;"	kind:namespace	line:5
+numpy	../src/shape_test.py	/^import numpy.testing as npt$/;"	kind:namespace	line:4
+numpy	../src/ui.py	/^import numpy as numpy$/;"	kind:namespace	line:3
+operator	../src/active_shape_model.py	/^import operator$/;"	kind:namespace	line:3
+plot_shape	../src/main.py	/^from shapeutils import plot_shape$/;"	kind:namespace	line:11
+plot_shape	../src/shape_test.py	/^from shapeutils import plot_shape, plot_vecs$/;"	kind:namespace	line:8
+plot_shape	../src/shapeutils.py	/^def plot_shape(shapes: Union[Shape, List[Shape]], plot=True):$/;"	kind:function	line:12
+plot_vecs	../src/shape_test.py	/^from shapeutils import plot_shape, plot_vecs$/;"	kind:namespace	line:8
+plot_vecs	../src/shapeutils.py	/^def plot_vecs($/;"	kind:function	line:28
+plt	../src/main.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:4
+plt	../src/shapeutils.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:2
+point.py	../src/point.py	1;"	kind:file	line:1
+points	../src/shapeutils.py	/^        points = [points]$/;"	kind:variable	line:38
+propose_shape	../src/active_shape_model.py	/^    def propose_shape(self, image_shape: ImageShape):$/;"	kind:member	line:183
+rotate_and_center_image	../src/gray_level_profile.py	/^    def rotate_and_center_image($/;"	kind:member	line:132
+s1	../src/testing.py	/^s1 = Shape([(1, 2), (1, 3), (1, 4), (2, 4), (3, 4), (3, 3), (3, 2), (2, 2)])$/;"	kind:variable	line:7
+s2	../src/testing.py	/^s2 = Shape([(5, 2), (6, 3), (7, 4), (8, 3), (9, 2), (8, 1), (7, 0), (6, 1)])$/;"	kind:variable	line:8
+s3	../src/testing.py	/^s3 = Shape([(5, 2), (6, 3), (8, 4), (8, 3), (9, 2), (8, 1), (7, 0), (6, 1)])$/;"	kind:variable	line:9
+s4	../src/testing.py	/^s4 = Shape([(5, 2), (6, 3), (6, 4), (8, 3), (9, 2), (8, 1), (7, 0), (6, 1)])$/;"	kind:variable	line:10
+s5	../src/testing.py	/^s5 = Shape([(5, 2), (6, 2), (8, 4), (8, 3), (9, 2), (8, 1), (7, 0), (6, 1)])$/;"	kind:variable	line:11
+s6	../src/testing.py	/^s6 = Shape([(5, 2), (6, 4), (8, 4), (8, 3), (9, 2), (8, 1), (7, 0), (6, 1)])$/;"	kind:variable	line:12
+se1	../src/testing.py	/^se1 = Shape([(1, 1), (2, 1), (3, 1), (3, 2), (3, 3), (2, 3), (1, 3), (1, 2)])$/;"	kind:variable	line:14
+se2	../src/testing.py	/^se2 = Shape([(1, 1), (2, 1), (3, 1), (3, 2), (3, 4), (2, 3.5), (1, 3), (1, 2)])$/;"	kind:variable	line:15
+shape.py	../src/shape.py	1;"	kind:file	line:1
+shape_test.py	../src/shape_test.py	1;"	kind:file	line:1
+shapeutils.py	../src/shapeutils.py	1;"	kind:file	line:1
+shapeutils_test.py	../src/shapeutils_test.py	1;"	kind:file	line:1
+sliding_profiles	../src/gray_level_profile.py	/^    def sliding_profiles($/;"	kind:member	line:85
+test_align_shapes	../src/active_shape_model_test.py	/^    def test_align_shapes(self):$/;"	kind:member	line:33
+test_align_shapes	../src/shape_test.py	/^    def test_align_shapes(self):$/;"	kind:member	line:23
+test_all_from_image_shapes	../src/gray_level_profile_test.py	/^    def test_all_from_image_shapes(self):$/;"	kind:member	line:17
+test_as_point_list	../src/shape_test.py	/^    def test_as_point_list(self):$/;"	kind:member	line:71
+test_from_shapes	../src/active_shape_model_test.py	/^    def test_from_shapes(self):$/;"	kind:member	line:12
+test_get_orthogonal_vectors	../src/shape_test.py	/^    def test_get_orthogonal_vectors(self):$/;"	kind:member	line:32
+test_images	../src/gray_level_profile_test.py	/^from testutils import test_images$/;"	kind:namespace	line:8
+test_images	../src/testutils.py	/^test_images = {$/;"	kind:variable	line:33
+test_plot_vecs	../src/shapeutils_test.py	/^    def test_plot_vecs(self):$/;"	kind:member	line:7
+test_rotate_and_center_image	../src/gray_level_profile_test.py	/^    def test_rotate_and_center_image(self):$/;"	kind:member	line:12
+test_sliding_profiles	../src/gray_level_profile_test.py	/^    def test_sliding_profiles(self):$/;"	kind:member	line:22
+test_translate_all_to_origin	../src/shape_test.py	/^    def test_translate_all_to_origin(self):$/;"	kind:member	line:12
+test_x_vector	../src/shape_test.py	/^    def test_x_vector(self):$/;"	kind:member	line:75
+test_y_vector	../src/shape_test.py	/^    def test_y_vector(self):$/;"	kind:member	line:80
+testing.py	../src/testing.py	1;"	kind:file	line:1
+testutils.py	../src/testutils.py	1;"	kind:file	line:1
+translate_all_to_origin	../src/shape.py	/^    def translate_all_to_origin(cls, shapes):$/;"	kind:member	line:147
+translate_to_origin	../src/shape.py	/^    def translate_to_origin(self):$/;"	kind:member	line:100
+ui.py	../src/ui.py	1;"	kind:file	line:1
+unittest	../src/active_shape_model_test.py	/^import unittest$/;"	kind:namespace	line:1
+unittest	../src/gray_level_profile_test.py	/^import unittest$/;"	kind:namespace	line:1
+unittest	../src/shape_test.py	/^import unittest$/;"	kind:namespace	line:1
+unittest	../src/shapeutils_test.py	/^import unittest$/;"	kind:namespace	line:1
+update_shape_parameters	../src/active_shape_model.py	/^    def update_shape_parameters(self, target_shape: Shape) -> np.ndarray:$/;"	kind:member	line:85
+util	../src/active_shape_model.py	/^import shapeutils as util$/;"	kind:namespace	line:9
+util	../src/testing.py	/^import shapeutils as util$/;"	kind:namespace	line:3
+vectors	../src/shapeutils.py	/^        vectors = [vectors]$/;"	kind:variable	line:36
+x_vector	../src/shape.py	/^    def x_vector(self):$/;"	kind:member	line:32
+y_vector	../src/shape.py	/^    def y_vector(self):$/;"	kind:member	line:36

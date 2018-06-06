@@ -4,5 +4,6 @@
     "/Users/joao/.local/share/virtualenvs/xray_teeth_detection-k81GLxZV/bin/python",
   "python.unitTest.unittestArgs": ["-v", "-s", "./src", "-p", "*_test.py"],
   "python.unitTest.unittestEnabled": true,
+  "python.linting.mypyEnabled": true,
   "black.lineLength": 88
 }

@@ -39,6 +39,9 @@ class ActiveShapeModelTest(unittest.TestCase):
 
         npt.assert_almost_equal(s1.points, s2.points, decimal=1)
 
+    def test_match_target(self):
+        
+
 
 if __name__ == "__main__":
     unittest.main()

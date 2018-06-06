@@ -6,6 +6,7 @@ from typing import List, NewType, Tuple, Union
 import cv2
 import numpy as np
 from scipy import interpolate
+
 from point import Point
 
 
@@ -165,3 +166,14 @@ class Shape:
     def copy(cls, source):
         """Creates a shape with the same points as a source shape"""
         return cls(np.copy(source.points))
+
+    @classmethod
+    def from_file(cls, image_index: int, incisor_index: int) -> "Shape":
+        filename = "./data/Landmarks/original/landmarks{:d}-{:d}.txt".format(
+            image_index, incisor_index
+        )
+        with open(filename) as f:
+            coordinates = [int(float(x)) for x in f.readlines()]
+            coord_iter = iter(coordinates)
+            points = [Point(*p) for p in zip(coord_iter, coord_iter)]
+            return cls(points)

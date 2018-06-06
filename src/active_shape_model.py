@@ -1,14 +1,15 @@
 # ActiveShapeModel class
 
+import operator
 from typing import List, Tuple
 
 import numpy as np
 from sklearn.decomposition import PCA
 
-from shape import Shape
 import shapeutils as util
 from gray_level_profile import GrayLevelProfile
 from image_shape import ImageShape
+from shape import Shape
 
 
 class ActiveShapeModel:
@@ -16,6 +17,11 @@ class ActiveShapeModel:
     ActiveShapeModel represents an instance of an ActiveShape that can be
     used to fit a new Shape to.
     """
+
+    mean_shape: Shape
+    eigenvectors: np.ndarray
+    eigenvalues: np.ndarray
+    profiles: List[GrayLevelProfile]
 
     def __init__(
         self,
@@ -143,11 +149,6 @@ class ActiveShapeModel:
         # Create matrix from all shapes
         shape_mat = np.array([np.reshape(shape.points, (-1)) for shape in shapes])
 
-        # Compute covariance matrix
-        cov_mat = np.cov(np.transpose(shape_mat))
-        # Eigenvalues and eigenvectors of covariance matrix
-        eigenvalues, eigenvectors = np.linalg.eig(cov_mat)
-
         pca_obj = PCA()
         pca_obj.fit(shape_mat)
 
@@ -163,7 +164,7 @@ class ActiveShapeModel:
         variance.
         """
         # Get shapes
-        shapes = [image_shape.image for image_shape in image_shapes]
+        shapes = [image_shape.shape for image_shape in image_shapes]
         # Find mean shape
         mean_shape = Shape.mean_from_many(shapes)
         mean_shape.translate_to_origin()
@@ -173,8 +174,45 @@ class ActiveShapeModel:
         pca_obj = PCA()
         pca_obj.fit(shape_mat)
 
-        profiles = GrayLevelProfile.all_from_image_shapes(image_shapes)
+        profiles = GrayLevelProfile.from_image_shapes(image_shapes)
 
         return cls(
             mean_shape, pca_obj.components_, pca_obj.explained_variance_, profiles
         )
+
+    def propose_shape(self, image_shape: ImageShape):
+        """
+        Proposes a better shape by sliding each point along its normal axis
+        so that the Mahalanobis distance of its profile in relation to the
+        mean profile is normalized.
+        """
+        # unpack
+        image = image_shape.image
+        shape = image_shape.shape
+
+        # get points and vectors
+        points = shape.as_point_list()
+        vectors = shape.get_orthogonal_vectors()
+        glps = self.gray_level_profiles
+
+        proposed_points = []
+
+        # find m sliding profiles of (2k+1) length for each point
+        for point, vector, glp in zip(points, vectors, glps):
+            possible_profiles = GrayLevelProfile.sliding_profiles(
+                image, point, vector, glp.half_sampling_size
+            )
+            distances = [
+                glp.mahalanobis_distance(profile) for profile in possible_profiles
+            ]
+            distance_index, _ = min(
+                enumerate(np.abs(distances)), key=operator.itemgetter(1)
+            )
+
+            proposed_points.append(
+                glp.get_point_position(
+                    distance_index, len(possible_profiles), point, vector
+                )
+            )
+
+        return shape(proposed_points)
