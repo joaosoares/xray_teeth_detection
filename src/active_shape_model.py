@@ -135,26 +135,6 @@ class ActiveShapeModel:
         return np.max(difference_array) < max_delta
 
     @classmethod
-    def from_shapes(cls, shapes: List[Shape], des_expvar_ratio=0.95):
-        """
-        Creates an ActiveShapeModel instance by finding the mean of
-        a list of Shapes, then applying PCA to the list to derive the
-        parameters with highest variance. Finally, we filter the eigenvalues
-        by order of variance until we reach the desired explained
-        variance.
-        """
-        # Find mean shape
-        mean_shape = Shape.mean_from_many(shapes)
-        mean_shape.translate_to_origin()
-        # Create matrix from all shapes
-        shape_mat = np.array([np.reshape(shape.points, (-1)) for shape in shapes])
-
-        pca_obj = PCA()
-        pca_obj.fit(shape_mat)
-
-        return cls(mean_shape, pca_obj.components_, pca_obj.explained_variance_)
-
-    @classmethod
     def from_image_shapes(cls, image_shapes: List[ImageShape], des_expvar_ratio=0.95):
         """
         Creates an ActiveShapeModel instance by finding the mean of
