@@ -3,9 +3,11 @@ import unittest
 import numpy as np
 import numpy.testing as npt
 
+import matplotlib.pyplot as plt
+
 from point import Point
 from shape import Shape
-from shapeutils import plot_shape, plot_vecs
+from shapeutils import plot_shape, plot_vecs, plot_rectangle
 
 
 class ShapeTest(unittest.TestCase):
@@ -65,7 +67,7 @@ class ShapeTest(unittest.TestCase):
         ort_vects = round_shape.get_orthogonal_vectors()
         print(ort_vects)
 
-        plot_shape(round_shape, plot=False)
+        plot_shape(round_shape, display=False)
         plot_vecs(ort_vects, round_shape.as_point_list())
 
     def test_as_point_list(self):
@@ -81,6 +83,15 @@ class ShapeTest(unittest.TestCase):
         s1 = Shape([(1, 2), (3, 4), (5, 6)])
         y_vec = s1.y_vector()
         npt.assert_array_equal(y_vec, np.array([2, 4, 6]))
+
+    def test_conform_to_rect(self):
+        s1 = Shape([(-20, 20), (0, 20), (0, -40), (-20, -40)])
+        bottom_left = Point(0, 0)
+        top_right = Point(50, 50)
+        plot_rectangle(bottom_left, top_right, display=False)
+        s2 = s1.conform_to_rect(bottom_left, top_right)
+        plot_shape([s1, s2])
+        npt.assert_equal(s2.axis_means(), np.array([25, 25]))
 
 
 if __name__ == "__main__":

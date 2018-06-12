@@ -6,6 +6,10 @@ from sklearn.decomposition import PCA
 
 from active_shape_model import ActiveShapeModel
 from shape import Shape
+from image_shape import ImageShape
+from point import Point
+from testutils import image_shape_with_noise, load_incisor
+from shapeutils import plot_shape, plot_image_shape
 
 
 class ActiveShapeModelTest(unittest.TestCase):
@@ -40,7 +44,28 @@ class ActiveShapeModelTest(unittest.TestCase):
         npt.assert_almost_equal(s1.points, s2.points, decimal=1)
 
     def test_match_target(self):
-        
+        pass
+
+    def test_propose_shape(self):
+        # Arrange
+        asm, image_shapes = load_incisor()
+        # Manually fit
+        bottom_left = Point(1310, 745)
+        top_right = Point(1410, 1000)
+        original_imgshp = ImageShape(
+            image_shapes[0].image,
+            asm.mean_shape.conform_to_rect(bottom_left, top_right),
+        )
+
+        # Act
+        imageshape = original_imgshp
+        for i in range(5):
+            proposed_shape = asm.propose_shape(imageshape)
+            matched_shape, *_ = asm.match_target(proposed_shape)
+            # Assert
+            plot_image_shape(imageshape, display=False)
+            plot_shape([proposed_shape, matched_shape])
+            imageshape = ImageShape(imageshape.image, matched_shape)
 
 
 if __name__ == "__main__":

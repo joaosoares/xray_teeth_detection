@@ -1,7 +1,7 @@
 """Procrustes method library"""
 
 from itertools import chain
-from typing import List, NewType, Tuple, Union
+from typing import List, NewType, Tuple, Union, Any
 
 import cv2
 import numpy as np
@@ -11,7 +11,9 @@ from point import Point
 
 
 class Shape:
-    def __init__(self, points: Union[List[Point], np.ndarray], gray_level_profiles=[]):
+    def __init__(
+        self, points: Union[List[Point], np.ndarray], gray_level_profiles=[]
+    ) -> None:
         self.points = np.array(points)
 
     def __len__(self):
@@ -94,6 +96,26 @@ class Shape:
 
         return s, rot_mat, transl_mat
 
+    def conform_to_rect(self, bottom_left: Point, top_right: Point) -> "Shape":
+        """Returns a version of the shape that fits on the given rectangle points"""
+        mean = (bottom_left + top_right) / 2
+        width, height = top_right - bottom_left
+
+        shape_zero_mean = self.translated_to_origin()
+
+        # Determine maximum and minimum dimensions
+        max_x, max_y = np.max(shape_zero_mean.points, axis=0)
+        min_x, min_y = np.min(shape_zero_mean.points, axis=0)
+
+        # Scaling factor is the
+        max_width = np.max(np.abs([max_x, min_x]))
+        max_height = np.max(np.abs([max_y, min_y]))
+        scaling_factor = np.min([width / 2 / max_width, height / 2 / max_height])
+        shape_zero_mean.points *= scaling_factor
+        shape_zero_mean.points = np.rint(shape_zero_mean.points).astype(int)
+
+        return shape_zero_mean.translated_to_point(mean)
+
     def axis_means(self):
         """Generates a 2x1 vector with means for x and y coordinates"""
         return np.mean(self.points, axis=0)
@@ -101,7 +123,18 @@ class Shape:
     def translate_to_origin(self):
         self.points = self.points - self.axis_means()
 
-    def get_orthogonal_vectors(self):
+    def translated_to_point(self, point: Union[Point, np.ndarray]) -> "Shape":
+        """Returns a new shape with mean translated to arbitrary point"""
+        return Shape(self.points + np.array(point))
+
+    def translated_to_origin(self) -> "Shape":
+        """Returns a new shape with points translated to origin"""
+        # return Shape(self.points - self.axis_means())
+        return self.translated_to_point(-self.axis_means())
+
+    def get_orthogonal_vectors(
+        self, with_tck: bool = False
+    ) -> Union[List[Point], Tuple[List[Point], Tuple[Any]]]:
         """Returns the estimated orthogonal unit vectors of the shape"""
         x = self.x_vector()
         y = self.y_vector()
@@ -127,7 +160,18 @@ class Shape:
         transp_orth = np.transpose(orth_vecs)
         vector_list = [Point(*i) for i in transp_orth]
 
-        return vector_list
+        # Normalize to 10 pixels size
+        norms = [np.linalg.norm(v) for v in vector_list]
+
+        normalized_list = [
+            Point(*np.multiply(np.divide(v, n), 20))
+            for (v, n) in zip(vector_list, norms)
+        ]
+
+        if with_tck:
+            return normalized_list, tck
+
+        return normalized_list
 
     @classmethod
     def apply_procrustes(cls, shapes):

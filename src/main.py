@@ -1,26 +1,13 @@
-import logging
-import pickle
+"""Main module for Incisor ASM recognition"""
 
-import cv2
-import matplotlib.pyplot as plt
-import numpy as np
-
+from imgutils import load_images
+from image_shape import ImageShape
+from shape import Shape
 from incisors import Incisors
 
 
-def load_images(indices):
-    """
-    Returns a list with opened cv2 images in the data folder
-    corresponding to the indices that are passed in.
-    """
-    image_filenames = ["./data/Radiographs/{:02d}.tif".format(i) for i in indices]
-    images = [
-        cv2.imread(filename, flags=cv2.IMREAD_GRAYSCALE) for filename in image_filenames
-    ]
-    return images
-
-
 def main():
+    """Main function"""
     images = load_images(range(1, 15))
     active_shape_models, image_shapes = Incisors.active_shape_models(
         images, incisors=[Incisors.UPPER_OUTER_LEFT]
@@ -29,7 +16,11 @@ def main():
     asm = active_shape_models[Incisors.UPPER_OUTER_LEFT]
     imgshp = image_shapes[Incisors.UPPER_OUTER_LEFT]
 
-    shap = asm.propose_shape(imgshp[0])
+    test_imgshp = ImageShape(
+        imgshp[0].image, Shape([p.add_noise() for p in imgshp[0].shape.as_point_list()])
+    )
+
+    shap = asm.propose_shape(test_imgshp)
 
     return
 

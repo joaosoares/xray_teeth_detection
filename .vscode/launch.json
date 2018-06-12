@@ -5,6 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Python Experimental: Terminal (integrated)",
+      "type": "pythonExperimental",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    },
+    {
       "name": "Python: Current File",
       "type": "python",
       "request": "launch",
@@ -12,10 +19,10 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "Python: File \"src/testing.py\"",
+      "name": "Python: File \"src/main.py\"",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/src/testing.py",
+      "program": "${workspaceFolder}/src/main.py",
       "internalConsoleOptions": "openOnSessionStart",
       "console": "integratedTerminal"
     },

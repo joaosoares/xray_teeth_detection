@@ -1,15 +1,20 @@
-# ActiveShapeModel class
+"""ActiveShapeModel class.
 
-import operator
-from typing import List, Tuple
+This class represents an Active Shape model according to the paper
+by Cootes, 1995.
+
+"""
+
+from operator import itemgetter
+from typing import cast, List
 
 import numpy as np
 from sklearn.decomposition import PCA
 
-import shapeutils as util
 from gray_level_profile import GrayLevelProfile
 from image_shape import ImageShape
 from shape import Shape
+from point import Point
 
 
 class ActiveShapeModel:
@@ -29,7 +34,7 @@ class ActiveShapeModel:
         eigenvectors: np.ndarray,
         eigenvalues: np.ndarray,
         profiles: List[GrayLevelProfile],
-    ):
+    ) -> None:
         self.mean_shape = mean_shape
         self.eigenvectors = np.real(eigenvectors)
         self.eigenvalues = np.real(eigenvalues)
@@ -78,8 +83,8 @@ class ActiveShapeModel:
                 )
             )
         mu = self.mean_shape.as_vector()
-        P_b = np.matmul(np.transpose(self.eigenvectors), shape_parameters)
-        new_shape_points = mu + P_b
+        p_b = np.matmul(np.transpose(self.eigenvectors), shape_parameters)
+        new_shape_points = mu + p_b
         return Shape.from_vector(new_shape_points)
 
     def update_shape_parameters(self, target_shape: Shape) -> np.ndarray:
@@ -92,21 +97,23 @@ class ActiveShapeModel:
         limited_shape_parameters = np.clip(new_shape_parameters, -limits, limits)
         return limited_shape_parameters
 
-    def fit_to_image(self, image, search_image, inital_estimate):
+    # TODO: Adjust this function and test it
+    def fit_to_image(self, search_image, inital_estimate=None):
         """
         Receives an image and iterates the initial_estimate to accurately
         fit the model in a region of that image.
         """
         # Initialize b=0, x=u
         shape_params = np.zeros(len(self))
-        initial_estimate = self.mean_shape
+        if inital_estimate == None:
+            initial_estimate = self.mean_shape
         # Start iterating
         converged = False
         est_shape_history = []
         while not converged:
             # Search around each xi for best nearby image point yi
-            suggested_shape = self.find_best_nearby_image_points(
-                search_image, initial_estimate
+            suggested_shape = self.propose_shape(
+                ImageShape(search_image, initial_estimate)
             )
             # Save as current estimated_shape
             estimated_shape, shape_params = self.match_target(
@@ -116,14 +123,6 @@ class ActiveShapeModel:
             converged = self.check_convergence(
                 *[shape.points for shape in est_shape_history[-2:-1]]
             )
-
-    def find_best_nearby_image_points(self, search_image, shape):
-        """
-        Returns new shape where points are shifted to better locations
-        according to the search_image information
-        """
-        # TODO: implement best nearby image points function
-        pass
 
     @staticmethod
     def check_convergence(array_1, array_2, max_delta=0.001):
@@ -151,7 +150,7 @@ class ActiveShapeModel:
         # Create matrix from all shapes
         shape_mat = np.array([np.reshape(shape.points, (-1)) for shape in shapes])
 
-        pca_obj = PCA()
+        pca_obj = PCA(n_components=des_expvar_ratio, svd_solver="full")
         pca_obj.fit(shape_mat)
 
         profiles = GrayLevelProfile.from_image_shapes(image_shapes)
@@ -173,26 +172,24 @@ class ActiveShapeModel:
         # get points and vectors
         points = shape.as_point_list()
         vectors = shape.get_orthogonal_vectors()
+        vectors = cast(List[Point], vectors)
         glps = self.gray_level_profiles
 
         proposed_points = []
 
         # find m sliding profiles of (2k+1) length for each point
         for point, vector, glp in zip(points, vectors, glps):
-            possible_profiles = GrayLevelProfile.sliding_profiles(
-                image, point, vector, glp.half_sampling_size
+            # Get profiles by sliding around normal axis
+            hsz = glp.half_sampling_size
+            possible_profiles = glp.sliding_profiles(
+                image, point, vector, hsz, int(hsz / 2)
             )
-            distances = [
-                glp.mahalanobis_distance(profile) for profile in possible_profiles
-            ]
-            distance_index, _ = min(
-                enumerate(np.abs(distances)), key=operator.itemgetter(1)
-            )
+            # Calculate mahalanobis distance b/w prof and statistical data for each prof
+            distances = [glp.mahalanobis_distance(prof) for prof in possible_profiles]
+            distance_idx, _ = min(enumerate(np.abs(distances)), key=itemgetter(1))
 
-            proposed_points.append(
-                glp.get_point_position(
-                    distance_index, len(possible_profiles), point, vector
-                )
-            )
+            plen = len(possible_profiles)
+            proposed_point = glp.get_point_position(distance_idx, plen, point, vector)
+            proposed_points.append(proposed_point)
 
-        return shape(proposed_points)
+        return Shape(proposed_points)

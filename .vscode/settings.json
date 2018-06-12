@@ -5,5 +5,9 @@
   "python.unitTest.unittestArgs": ["-v", "-s", "./src", "-p", "*_test.py"],
   "python.unitTest.unittestEnabled": true,
   "python.linting.mypyEnabled": true,
+  "python.linting.pylintArgs": [
+    "--disable=C0330",
+    "--extension-pkg-whitelist=cv2"
+  ],
   "black.lineLength": 88
 }
