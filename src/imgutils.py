@@ -30,22 +30,22 @@ def top_hat_processing(images, ksize=150):
     return [cv2.morphologyEx(img, cv2.MORPH_TOPHAT, kernel=kernel) for img in images]
 
 
-def apply_sobel(images: Union[np.ndarray, List[np.ndarray]]) -> List[np.ndarray]:
+def apply_sobel(
+    images: Union[np.ndarray, List[np.ndarray]], scale=1, delta=0
+) -> List[np.ndarray]:
     if isinstance(images, np.ndarray):
         images = [images]
-    return [_apply_sobel_single_img(image) for image in images]
+    return [_apply_sobel_single_img(image, scale, delta) for image in images]
 
 
-def _apply_sobel_single_img(image: np.ndarray) -> np.ndarray:
-    scale = 1
-    delta = 0
+def _apply_sobel_single_img(image: np.ndarray, scale, delta) -> np.ndarray:
     ddepth = cv2.CV_16S
     grad_x = cv2.Sobel(
         image,
         ddepth,
         1,
         0,
-        ksize=3,
+        ksize=-1,
         scale=scale,
         delta=delta,
         borderType=cv2.BORDER_DEFAULT,
