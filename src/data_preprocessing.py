@@ -1,12 +1,26 @@
+from typing import List, Union, Callable
+
 import cv2
+import numpy as np
 from matplotlib import pyplot as plt
 
 
 class Preprocessor:
+    @staticmethod
+    def apply(
+        images: Union[np.ndarray, List[np.ndarray]], apply_fn: Callable, **kwargs
+    ) -> List[np.ndarray]:
+        """Applies a preprocessing function to a list of images"""
+        if isinstance(images, np.ndarray):
+            images = [images]
+        return [apply_fn(image, **kwargs) for image in images]
+
     @classmethod
-    def bilateral_filter(
-        cls, image, diameter=9, sigma_color=150, sigma_space=150, times=1
-    ):
+    def bilateral_filter(cls, images, **kwargs):
+        return cls.apply(images, cls._bilateral_filter, **kwargs)
+
+    @staticmethod
+    def _bilateral_filter(image, diameter=9, sigma_color=150, sigma_space=150, times=1):
         filtered = image
         for _ in range(times):
             filtered = cv2.bilateralFilter(

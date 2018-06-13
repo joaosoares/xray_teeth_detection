@@ -11,6 +11,7 @@ from image_shape import ImageShape
 from imgutils import load_images, apply_median_blur, apply_sobel
 from incisors import Incisors
 from shape import Shape
+from data_preprocessing import Preprocessor
 
 
 def create_diagonal_test_image(l: int) -> np.ndarray:
@@ -67,7 +68,7 @@ def load_incisor(
 ) -> Tuple[ActiveShapeModel, List[ImageShape]]:
     """Loads asm and imgshapes for sample incisor"""
     images = load_images(range(1, 15))
-    blurred_images = apply_median_blur(images, times=3)
+    blurred_images = Preprocessor.bilateral_filter(images, times=2)
     if blur:
         images = blurred_images
     sobel_images = apply_sobel(images)
