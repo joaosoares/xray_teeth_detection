@@ -31,7 +31,7 @@ class GrayLevelProfile:
         return (error.T @ self.covariance @ error).item(0, 0)
 
     @staticmethod
-    def get_point_position(
+    def point_pos_from_profiles_list(
         profile_index: int, profiles_count: int, original_point: Point, direction_vector
     ) -> Point:
         """
@@ -60,8 +60,31 @@ class GrayLevelProfile:
         # Add img_vec to original point to get new point
         return original_point + img_vec
 
+    @staticmethod
+    def point_pos_from_single_profile(
+        elem_idx: int, elem_count: int, original_point: Point, direction_vector: Point
+    ) -> Point:
+        # Adjust index to make center point be zero
+        k = (elem_count - 1) // 2
+        elem_idx = elem_idx - k
+
+        # on rotate_and_center_image, there is a minus sign before np.arctan2
+        rev_angle = np.arctan2(direction_vector[0], direction_vector[1])
+
+        # define vector from origin to new point on axis
+        axis_vec = Point(elem_idx, 0)
+
+        # Rotate this vector to get necessary image displacement
+        cosine, sine = np.cos(rev_angle), np.sin(rev_angle)
+        rot_mat = np.array(((cosine, -sine), (sine, cosine)))
+        result = rot_mat @ np.array(axis_vec)
+        img_vec = Point(result[1], result[0]).round()
+
+        # Add img_vec to original point to get new point
+        return original_point - img_vec
+
     @classmethod
-    def from_image_shapes(cls, images: List[ImageShape], half_sampling_size: int = 60):
+    def from_image_shapes(cls, images: List[ImageShape], half_sampling_size: int = 20):
         """Creates a GLP for each landmark point using the shapes and images provided."""
         images_samples: List[List[np.ndarray]] = [
             [] for i in range(len(images[0].shape))
@@ -104,9 +127,7 @@ class GrayLevelProfile:
             profile_count = half_sampling_size
 
         if processing_fn is None:
-            processing_fn = lambda sample: cls.normalize(
-                np.gradient(sample.astype(np.float), axis=1)
-            )
+            processing_fn = cls.normalize
 
         # Rotate image so that horizontal line is aligned to direction vector
         rot_img = cls.rotate_and_center_image(image, center_point, direction_vector)
@@ -144,12 +165,10 @@ class GrayLevelProfile:
         rows = image.shape[0]
         cols = image.shape[1]
         # Translate POI to origin and rotate around so direction vector is horizontal
-        angle = np.degrees(
-            -np.arctan2(direction_vector[1], direction_vector[0])
-        )  # invert because np fn uses (1, 0) as ref
+        angle = np.degrees(np.arctan2(direction_vector[0], direction_vector[1]))
 
         # Create rotation matrix and apply warp affine
         rot_mat = cv2.getRotationMatrix2D(center_point, angle, 1)
-        rot_img = cv2.warpAffine(image, rot_mat, (cols, rows), flags=cv2.INTER_CUBIC)
+        rot_img = cv2.warpAffine(image, rot_mat, (cols, rows), flags=cv2.INTER_LINEAR)
 
         return rot_img

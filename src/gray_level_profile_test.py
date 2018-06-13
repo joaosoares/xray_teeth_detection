@@ -27,13 +27,15 @@ class GrayLevelProfileTest(unittest.TestCase):
         self.assertEqual(len(profiles), 9, "Wrong number of profiles generated")
         self.assertTupleEqual(profiles[0].shape, (9,))
 
-    def test_get_point_position(self):
+    def test_point_pos_from_profiles_list(self):
         """Test for GrayLevelProfile#get_point_position"""
         prof_idx = 3
         cnt = 20  # to guarantee that idx 3 is to the right
         cnt_pnt = Point(10, 10)
         dir_vec = Point(3, 3)
-        p = GrayLevelProfile.get_point_position(prof_idx, cnt, cnt_pnt, dir_vec)
+        p = GrayLevelProfile.point_pos_from_profiles_list(
+            prof_idx, cnt, cnt_pnt, dir_vec
+        )
 
         print(p)
         plot_point(cnt_pnt, display=False)
