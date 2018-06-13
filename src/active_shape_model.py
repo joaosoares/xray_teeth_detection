@@ -186,7 +186,7 @@ class ActiveShapeModel:
             )
             # Calculate mahalanobis distance b/w prof and statistical data for each prof
             distances = [glp.mahalanobis_distance(prof) for prof in possible_profiles]
-            distance_idx, _ = min(enumerate(np.abs(distances)), key=itemgetter(1))
+            distance_idx = np.argmin(np.abs(distances))
 
             plen = len(possible_profiles)
             proposed_point = glp.get_point_position(distance_idx, plen, point, vector)
