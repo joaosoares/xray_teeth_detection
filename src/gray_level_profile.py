@@ -28,7 +28,7 @@ class GrayLevelProfile:
     def mahalanobis_distance(self, sample: np.ndarray):
         """Calculates the Mahalanobis distance of the sample to the GLP"""
         error = sample - self.mean_profile
-        return (error.T @ self.covariance @ error).item(0, 0)
+        return (error.T @ self.inv_cov @ error).item(0, 0)
 
     @staticmethod
     def point_pos_from_profiles_list(
@@ -46,7 +46,7 @@ class GrayLevelProfile:
             profile_index -= profiles_count
 
         # on rotate_and_center_image, there is a minus sign before np.arctan2
-        rev_angle = np.arctan2(direction_vector[1], direction_vector[0])
+        rev_angle = np.arctan2(direction_vector[0], direction_vector[1])
 
         # define vector from origin to new point on axis
         axis_vec = Point(profile_index, 0)
@@ -55,10 +55,10 @@ class GrayLevelProfile:
         cosine, sine = np.cos(rev_angle), np.sin(rev_angle)
         rot_mat = np.array(((cosine, -sine), (sine, cosine)))
         result = rot_mat @ np.array(axis_vec)
-        img_vec = Point(*result).round()
+        img_vec = Point(result[1], result[0]).round()
 
         # Add img_vec to original point to get new point
-        return original_point + img_vec
+        return original_point - img_vec
 
     @staticmethod
     def point_pos_from_single_profile(

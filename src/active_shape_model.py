@@ -181,13 +181,14 @@ class ActiveShapeModel:
         for point, vector, glp in zip(points, vectors, glps):
             # Get profiles by sliding around normal axis
             hsz = glp.half_sampling_size
-            profile = glp.sliding_profiles(image, point, vector, hsz, 0)[0]
-
+            profiles = glp.sliding_profiles(image, point, vector, hsz, int(hsz / 2))
+            # Calculate Mahalanobis distances
+            distances = [glp.mahalanobis_distance(prof) for prof in profiles]
             # Find strongest edge
-            distance_idx = np.argmax(profile)
+            distance_idx = np.argmin(distances)
 
-            plen = len(profile)
-            proposed_point = glp.point_pos_from_single_profile(
+            plen = len(profiles)
+            proposed_point = GrayLevelProfile.point_pos_from_profiles_list(
                 distance_idx, plen, point, vector
             )
             proposed_points.append(proposed_point)
