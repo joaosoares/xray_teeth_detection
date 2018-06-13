@@ -20,3 +20,8 @@ def apply_median_blur(images, kernel_size=5, times=1):
     for i in range(times):
         images = [cv2.medianBlur(image, ksize=kernel_size) for image in images]
     return images
+
+
+def top_hat_processing(images, ksize=150):
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, ksize=(ksize, ksize))
+    return [cv2.morphologyEx(img, cv2.MORPH_TOPHAT, kernel=kernel) for img in images]
