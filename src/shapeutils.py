@@ -25,7 +25,7 @@ def plot_shape(shapes: Union[Shape, List[Shape]], overlay_image=None, display=Tr
         plt.plot(x_values, y_values, "-o")
 
     if overlay_image is not None:
-        plt.imshow(overlay_image)
+        plt.imshow(overlay_image, cmap="gray")
 
     plt.axes().set_aspect("equal", "datalim")
     if display:
