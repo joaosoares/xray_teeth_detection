@@ -8,7 +8,7 @@ import numpy.testing as npt
 
 from active_shape_model import ActiveShapeModel
 from image_shape import ImageShape
-from imgutils import load_images, apply_median_blur
+from imgutils import load_images, apply_median_blur, apply_sobel
 from incisors import Incisors
 from shape import Shape
 
@@ -63,13 +63,16 @@ TEST_IMAGES = {
 
 
 def load_incisor(
-    incisor=Incisors.UPPER_OUTER_LEFT, extra_text="", blur=False
+    incisor=Incisors.UPPER_OUTER_LEFT, extra_text="", blur=False, sobel=False
 ) -> Tuple[ActiveShapeModel, List[ImageShape]]:
     """Loads asm and imgshapes for sample incisor"""
     images = load_images(range(1, 15))
     blurred_images = apply_median_blur(images, times=3)
     if blur:
         images = blurred_images
+    sobel_images = apply_sobel(images)
+    if sobel:
+        images = sobel_images
     asms, imgshapes = Incisors.active_shape_models(images, [incisor])
     asm: ActiveShapeModel = asms[incisor]
     imgshape: List[ImageShape] = imgshapes[incisor]

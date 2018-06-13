@@ -48,7 +48,7 @@ class ActiveShapeModelTest(unittest.TestCase):
 
     def test_propose_shape(self):
         # Arrange
-        asm, image_shapes = load_incisor()
+        asm, image_shapes = load_incisor(blur=True, sobel=True)
         # Manually fit
         bottom_left = Point(1310, 745)
         top_right = Point(1410, 1000)

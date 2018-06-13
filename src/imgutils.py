@@ -1,6 +1,9 @@
 """Set of utilities to handle loading and saving images"""
 
+from typing import List, Union
+
 import cv2
+import numpy as np
 
 
 def load_images(indices, extra_text="", flags=cv2.IMREAD_GRAYSCALE):
@@ -25,3 +28,42 @@ def apply_median_blur(images, kernel_size=5, times=1):
 def top_hat_processing(images, ksize=150):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, ksize=(ksize, ksize))
     return [cv2.morphologyEx(img, cv2.MORPH_TOPHAT, kernel=kernel) for img in images]
+
+
+def apply_sobel(images: Union[np.ndarray, List[np.ndarray]]) -> List[np.ndarray]:
+    if isinstance(images, np.ndarray):
+        images = [images]
+    return [_apply_sobel_single_img(image) for image in images]
+
+
+def _apply_sobel_single_img(image: np.ndarray) -> np.ndarray:
+    scale = 1
+    delta = 0
+    ddepth = cv2.CV_16S
+    grad_x = cv2.Sobel(
+        image,
+        ddepth,
+        1,
+        0,
+        ksize=3,
+        scale=scale,
+        delta=delta,
+        borderType=cv2.BORDER_DEFAULT,
+    )
+    # Gradient-Y
+    # grad_y = cv.Scharr(gray,ddepth,0,1)
+    grad_y = cv2.Sobel(
+        image,
+        ddepth,
+        0,
+        1,
+        ksize=3,
+        scale=scale,
+        delta=delta,
+        borderType=cv2.BORDER_DEFAULT,
+    )
+
+    abs_grad_x = cv2.convertScaleAbs(grad_x)
+    abs_grad_y = cv2.convertScaleAbs(grad_y)
+
+    return cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
