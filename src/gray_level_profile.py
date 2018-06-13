@@ -27,9 +27,8 @@ class GrayLevelProfile:
 
     def mahalanobis_distance(self, sample: np.ndarray):
         """Calculates the Mahalanobis distance of the sample to the GLP"""
-        # error = sample - self.mean_profile
-        # return (error.T @ self.inv_cov @ error).item(0, 0)
-        return np.square(np.subtract(sample, self.mean_profile)).mean()
+        error = sample - self.mean_profile
+        return (error.T @ self.covariance @ error).item(0, 0)
 
     @staticmethod
     def get_point_position(
@@ -62,7 +61,7 @@ class GrayLevelProfile:
         return original_point + img_vec
 
     @classmethod
-    def from_image_shapes(cls, images: List[ImageShape], half_sampling_size: int = 40):
+    def from_image_shapes(cls, images: List[ImageShape], half_sampling_size: int = 60):
         """Creates a GLP for each landmark point using the shapes and images provided."""
         images_samples: List[List[np.ndarray]] = [
             [] for i in range(len(images[0].shape))
