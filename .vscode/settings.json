@@ -1,5 +1,5 @@
 {
-  "python.formatting.provider": "none",
+  "python.formatting.provider": "black",
   "python.pythonPath":
     "/Users/joao/.local/share/virtualenvs/xray_teeth_detection-k81GLxZV/bin/python",
   "python.unitTest.unittestArgs": ["-v", "-s", "./src", "-p", "*_test.py"],
@@ -9,5 +9,6 @@
     "--disable=C0330",
     "--extension-pkg-whitelist=cv2"
   ],
-  "black.lineLength": 88
+  "black.lineLength": 88,
+  "editor.formatOnSave": true
 }
