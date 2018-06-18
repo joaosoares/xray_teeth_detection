@@ -2,7 +2,6 @@ from enum import Enum
 
 from active_shape_model import ActiveShapeModel
 from image_shape import ImageShape
-from point import Point
 from shape import Shape
 
 
@@ -23,7 +22,7 @@ class Incisors(Enum):
         one with active shape models and the other with the corresponding
         image_shapes used for each incisor.
         """
-        if incisors == None:
+        if incisors is None:
             incisors = cls
 
         active_shape_models = {}
