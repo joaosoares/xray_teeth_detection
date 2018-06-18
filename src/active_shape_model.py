@@ -97,32 +97,38 @@ class ActiveShapeModel:
         limited_shape_parameters = np.clip(new_shape_parameters, -limits, limits)
         return limited_shape_parameters
 
-    # TODO: Adjust this function and test it
-    def fit_to_image(self, search_image, inital_estimate=None):
+    def fit_to_image(self, initial_imgshp: ImageShape) -> ImageShape:
         """
-        Receives an image and iterates the initial_estimate to accurately
-        fit the model in a region of that image.
+        Receives an imageshape and iterates that initial estimated shape
+        to accurately fit the model in a region of that image.
         """
-        # Initialize b=0, x=u
-        shape_params = np.zeros(len(self))
-        if inital_estimate == None:
-            initial_estimate = self.mean_shape
-        # Start iterating
+        # Lists to store past values
+        image_shape_history: List[ImageShape] = []
+        shape_params_history: List[np.ndarray] = []
+
+        image_shape_history.append(initial_imgshp)
+
+        # Loop control variables
         converged = False
-        est_shape_history = []
-        while not converged:
+        loop_counter = 0
+        while (not converged) and (loop_counter < 20):
             # Search around each xi for best nearby image point yi
-            suggested_shape = self.propose_shape(
-                ImageShape(search_image, initial_estimate)
-            )
+            proposed_shape = self.propose_shape(image_shape_history[-1])
+
             # Save as current estimated_shape
-            estimated_shape, shape_params = self.match_target(
-                suggested_shape, shape_params
-            )
-            est_shape_history.append(estimated_shape)
+            matched_shape, *_ = self.match_target(proposed_shape)
+            image_shape_history.append(ImageShape(initial_imgshp.image, matched_shape))
+            shape_params_history.append(matched_shape)
+
+            # Check convergence
             converged = self.check_convergence(
-                *[shape.points for shape in est_shape_history[-2:-1]]
+                image_shape_history[-1].shape.points,
+                image_shape_history[-2].shape.points,
             )
+
+            loop_counter += 1
+
+        return image_shape_history[-1]
 
     @staticmethod
     def check_convergence(array_1, array_2, max_delta=0.001):

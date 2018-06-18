@@ -67,6 +67,21 @@ class ActiveShapeModelTest(unittest.TestCase):
             plot_shape([proposed_shape, matched_shape])
             imageshape = ImageShape(imageshape.image, matched_shape)
 
+    def test_fit_to_image(self):
+        asm, image_shapes = load_incisor(blur=True, sobel=True)
+        # Manually fit
+        bottom_left = Point(1310, 745)
+        top_right = Point(1410, 1000)
+        initial_imgshp = ImageShape(
+            image_shapes[0].image,
+            asm.mean_shape.conform_to_rect(bottom_left, top_right),
+        )
+
+        matched_image_shape = asm.fit_to_image(initial_imgshp)
+
+        plot_image_shape(initial_imgshp, display=False)
+        plot_image_shape(matched_image_shape)
+
 
 if __name__ == "__main__":
     unittest.main()
