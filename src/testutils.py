@@ -68,7 +68,8 @@ def load_incisor(
 ) -> Tuple[ActiveShapeModel, List[ImageShape]]:
     """Loads asm and imgshapes for sample incisor"""
     images = load_images(range(1, 15))
-    blurred_images = Preprocessor.bilateral_filter(images, times=2)
+    pipeline = [(Preprocessor.bilateral, {"times": 2})]
+    blurred_images = Preprocessor.apply(pipeline, images)
     if blur:
         images = blurred_images
     sobel_images = apply_sobel(images)

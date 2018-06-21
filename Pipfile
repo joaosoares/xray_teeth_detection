@@ -13,6 +13,8 @@ yapf = "*"
 matplotlib = "*"
 scipy = "*"
 scikit-learn = "*"
+click = "*"
+tqdm = "*"
 
 
 [dev-packages]

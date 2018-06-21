@@ -2,3 +2,6 @@
 .DS_Store
 **/*.pyc
 .mypy_cache
+actual*.png
+results*
+actual*.jpg

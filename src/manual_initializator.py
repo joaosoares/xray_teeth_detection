@@ -1,7 +1,7 @@
 """"""
 from typing import Dict, List, NamedTuple
 
-from numpy import np
+import numpy as np
 
 from active_shape_model import ActiveShapeModel
 from image_shape import ImageShape
@@ -15,7 +15,14 @@ ImageShapesDict = Dict[Incisors, List[ImageShape]]
 InitCoordsDict = Dict[Incisors, List[InitCoord]]
 
 
-class ManualInitializator:
+class Initializator:
+    def initialize(
+        self, asm_dict: AsmDict, images: List[np.ndarray]
+    ) -> ImageShapesDict:
+        raise NotImplementedError
+
+
+class ManualInitializator(Initializator):
     """Manual initializator for incisor positions in images (hardcoded)"""
 
     IMAGE_COORDS = {
@@ -83,7 +90,7 @@ class ManualInitializator:
             InitCoord(Point(1559, 560), Point(1702, 833)),
             InitCoord(Point(1570, 696), Point(1676, 982)),
         ],
-        Incisors.LOWER_INNER_LEFT: [
+        Incisors.LOWER_OUTER_LEFT: [
             InitCoord(Point(1352, 1026), Point(1445, 1294)),
             InitCoord(Point(1342, 1004), Point(1438, 1299)),
             InitCoord(Point(1352, 1047), Point(1461, 1313)),
@@ -150,9 +157,7 @@ class ManualInitializator:
     }
 
     @classmethod
-    def initialize(
-        cls, asm_dict: AsmDict, images: List[np.ndarray[int]]
-    ) -> ImageShapesDict:
+    def initialize(cls, asm_dict: AsmDict, images: List[np.ndarray]) -> ImageShapesDict:
         """Initializes a dictionary with imageshapes for each incisor"""
         images = images[: cls._min_hardcoded_length()]
         image_shapes = {
@@ -163,7 +168,7 @@ class ManualInitializator:
 
     @classmethod
     def find_image_shapes(
-        cls, incisor: Incisors, asm_dict: AsmDict, images: List[np.ndarray[int]]
+        cls, incisor: Incisors, asm_dict: AsmDict, images: List[np.ndarray]
     ) -> List[ImageShape]:
         """Creates a list of imageshapes for a given incisor"""
         init_coords = cls.IMAGE_COORDS[incisor]

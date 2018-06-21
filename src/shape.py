@@ -179,7 +179,7 @@ class Shape:
         # Translate all shapes to be centered at (0, 0)
         Shape.translate_all_to_origin(shapes)
         ref_shape, *_ = shapes
-        # Rotate, scale and translate each shape to align with the first shape in theset
+        # Rotate, scale and translate each shape to align with the first shape in the set
         cls.align_many(ref_shape, shapes)
 
     @classmethod

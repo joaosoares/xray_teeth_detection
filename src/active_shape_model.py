@@ -124,6 +124,7 @@ class ActiveShapeModel:
             converged = self.check_convergence(
                 image_shape_history[-1].shape.points,
                 image_shape_history[-2].shape.points,
+                max_delta=2,
             )
 
             loop_counter += 1
@@ -150,15 +151,16 @@ class ActiveShapeModel:
         """
         # Get shapes
         shapes = [image_shape.shape for image_shape in image_shapes]
+        # Shape.apply_procrustes(shapes)
         # Find mean shape
         mean_shape = Shape.mean_from_many(shapes)
         mean_shape.translate_to_origin()
         # Create matrix from all shapes
         shape_mat = np.array([np.reshape(shape.points, (-1)) for shape in shapes])
-
+        # Calculate PCA
         pca_obj = PCA(n_components=des_expvar_ratio, svd_solver="full")
         pca_obj.fit(shape_mat)
-
+        # Create GLPs
         profiles = GrayLevelProfile.from_image_shapes(image_shapes)
 
         return cls(

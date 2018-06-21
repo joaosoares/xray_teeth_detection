@@ -8,6 +8,7 @@ from active_shape_model import ActiveShapeModel
 from shape import Shape
 from image_shape import ImageShape
 from point import Point
+from incisors import Incisors
 from testutils import image_shape_with_noise, load_incisor
 from shapeutils import plot_shape, plot_image_shape
 
@@ -68,18 +69,22 @@ class ActiveShapeModelTest(unittest.TestCase):
             imageshape = ImageShape(imageshape.image, matched_shape)
 
     def test_fit_to_image(self):
-        asm, image_shapes = load_incisor(blur=True, sobel=True)
+        asm, image_shapes = load_incisor(
+            blur=False, sobel=False, incisor=Incisors.LOWER_INNER_LEFT
+        )
         # Manually fit
-        bottom_left = Point(1310, 745)
-        top_right = Point(1410, 1000)
+        bottom_left = Point(1431, 992)
+        top_right = Point(1544, 1274)
         initial_imgshp = ImageShape(
-            image_shapes[0].image,
+            image_shapes[4].image,
             asm.mean_shape.conform_to_rect(bottom_left, top_right),
         )
 
         matched_image_shape = asm.fit_to_image(initial_imgshp)
 
-        plot_image_shape(initial_imgshp, display=False)
+        plot_image_shape(
+            initial_imgshp, display=False, interpol=False, dots=False, vecs=False
+        )
         plot_image_shape(matched_image_shape)
 
 

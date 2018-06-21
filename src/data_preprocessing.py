@@ -1,26 +1,33 @@
-from typing import List, Union, Callable
+"""Data processing module"""
+from typing import Callable, Dict, List, Tuple, Type, Union, Text
 
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+from functools import reduce
+
+Image = Type[np.ndarray]
+FnWithArgs = Tuple[Callable[..., Image], Dict[Text, int]]
+FnWithoutArgs = Tuple[Callable[[Image], Image]]
+FunctionList = List[Union[FnWithArgs, FnWithoutArgs]]
 
 
 class Preprocessor:
     @staticmethod
-    def apply(
-        images: Union[np.ndarray, List[np.ndarray]], apply_fn: Callable, **kwargs
-    ) -> List[np.ndarray]:
+    def apply(pipeline: FunctionList, images: Union[Image, List[Image]]) -> List[Image]:
         """Applies a preprocessing function to a list of images"""
         if isinstance(images, np.ndarray):
             images = [images]
-        return [apply_fn(image, **kwargs) for image in images]
 
-    @classmethod
-    def bilateral_filter(cls, images, **kwargs):
-        return cls.apply(images, cls._bilateral_filter, **kwargs)
+        def apply_fn(obj, fun):
+            if fun[1]:
+                return fun[0](obj, **fun[1])
+            return fun[0](obj)
+
+        return [reduce(apply_fn, pipeline, image) for image in images]
 
     @staticmethod
-    def _bilateral_filter(image, diameter=9, sigma_color=150, sigma_space=150, times=1):
+    def bilateral(image, diameter=9, sigma_color=150, sigma_space=150, times=1):
         filtered = image
         for _ in range(times):
             filtered = cv2.bilateralFilter(
@@ -57,30 +64,12 @@ class Preprocessor:
         plt.imshow(img, cmap="gray")
         plt.show()
 
-    @classmethod
-    def apply_sobel(cls, img, scale, delta):
+    @staticmethod
+    def sobel(img, scale=1, delta=0):
         ddepth = cv2.CV_16S
 
-        grad_x = cv2.Sobel(
-            img,
-            ddepth,
-            1,
-            0,
-            ksize=3,
-            scale=scale,
-            delta=delta,
-            borderType=cv2.BORDER_DEFAULT,
-        )
-        grad_y = cv2.Sobel(
-            img,
-            ddepth,
-            0,
-            1,
-            ksize=3,
-            scale=scale,
-            delta=delta,
-            borderType=cv2.BORDER_DEFAULT,
-        )
+        grad_x = cv2.Sobel(img, ddepth, 1, 0, ksize=3, scale=scale, delta=delta)
+        grad_y = cv2.Sobel(img, ddepth, 0, 1, ksize=3, scale=scale, delta=delta)
 
         abs_grad_x = cv2.convertScaleAbs(grad_x)
         abs_grad_y = cv2.convertScaleAbs(grad_y)

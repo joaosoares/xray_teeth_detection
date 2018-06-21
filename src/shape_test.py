@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from point import Point
 from shape import Shape
 from shapeutils import plot_shape, plot_vecs, plot_rectangle
+from testutils import load_incisor
 
 
 class ShapeTest(unittest.TestCase):
@@ -92,6 +93,13 @@ class ShapeTest(unittest.TestCase):
         s2 = s1.conform_to_rect(bottom_left, top_right)
         plot_shape([s1, s2])
         npt.assert_equal(s2.axis_means(), np.array([25, 25]))
+
+    def test_apply_procrustes(self):
+        asm, image_shapes = load_incisor()
+        shapes = [imgshp.shape for imgshp in image_shapes]
+        Shape.apply_procrustes(shapes)
+        # Shape.translate_all_to_origin(shapes)
+        plot_shape(shapes, dots=False)
 
 
 if __name__ == "__main__":

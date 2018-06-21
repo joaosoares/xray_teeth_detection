@@ -12,7 +12,9 @@ from shape import Shape
 from image_shape import ImageShape
 
 
-def plot_shape(shapes: Union[Shape, List[Shape]], overlay_image=None, display=True):
+def plot_shape(
+    shapes: Union[Shape, List[Shape]], overlay_image=None, display=True, dots=True
+):
     """Plots a single shape or an array of shapes"""
     if isinstance(shapes, Shape):
         shapes = [shapes]
@@ -21,8 +23,10 @@ def plot_shape(shapes: Union[Shape, List[Shape]], overlay_image=None, display=Tr
         # Append the first point in the end to draw line b/w 1st and last
         x_values = np.append(shape.points[:, 0], shape.points[:, 0][0])
         y_values = np.append(shape.points[:, 1], shape.points[:, 1][0])
-
-        plt.plot(x_values, y_values, "-o")
+        if dots:
+            plt.plot(x_values, y_values, "-o")
+        else:
+            plt.plot(x_values, y_values, "-")
 
     if overlay_image is not None:
         plt.imshow(overlay_image, cmap="gray")
@@ -100,7 +104,13 @@ def plot_profile(profiles: Union[np.ndarray, List[np.ndarray]], display=True):
         plt.show()
 
 
-def plot_image_shape(image_shapes: Union[ImageShape, List[ImageShape]], display=True):
+def plot_image_shape(
+    image_shapes: Union[ImageShape, List[ImageShape]],
+    display=True,
+    dots=True,
+    interpol=True,
+    vecs=True,
+):
     if isinstance(image_shapes, ImageShape):
         image_shapes = [image_shapes]
 
@@ -109,10 +119,12 @@ def plot_image_shape(image_shapes: Union[ImageShape, List[ImageShape]], display=
         image = image_shape.image
         points = shape.as_point_list()
         vectors, interpol = shape.get_orthogonal_vectors(with_tck=True)
-        plot_shape(shape, display=False, overlay_image=image)
-        plot_vecs(vectors, points, display=False)
+        plot_shape(shape, display=False, overlay_image=image, dots=dots)
+        if vecs:
+            plot_vecs(vectors, points, display=False)
 
-        interpol = cast(Tuple[Any], interpol)
-        plot_interpol(interpol, display=False)
+        if interpol:
+            interpol = cast(Tuple[Any], interpol)
+            plot_interpol(interpol, display=False)
     if display:
         plt.show()
